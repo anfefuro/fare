@@ -1,5 +1,5 @@
+python3
 sklearn
 pandas
 streamlit
-pickle
 numpy 
