@@ -1,8 +1,8 @@
 import pandas as pd
 import streamlit as st
-import pickle
+# import pickle
 import numpy as np
-
+'''
 with open('pkl_dis.pkl', 'rb') as pdis:
     model_dis = pickle.load(pdis)
 
@@ -20,27 +20,37 @@ with open('pkl_air.pkl', 'rb') as pair:
 
 with open('pkl_lin.pkl', 'rb') as plin:
     model_lin = pickle.load(plin)
+'''
+
+model_dis = pd.read_pickle('pkl_dis.pkl')
+model_dur = pd.read_pickle('pkl_dur.pkl')
+model_rate = pd.read_pickle('pkl_rate.pkl')
+model_tolls = pd.read_pickle('pkl_tolls.pkl')
+model_air = pd.read_pickle('pkl_air.pkl')
+model_lin = pd.read_pickle('pkl_lin.pkl')
 
 df = pd.read_parquet('taxi_trip.parquet', 'pyarrow')
 zones_lookup = pd.read_parquet('zones.parquet', 'pyarrow')
 data = {zones_lookup.Zone[i] : zones_lookup.LocationID[i] for i in range(len(zones_lookup.LocationID))}
+hour_format = ['0:00 - 1:00','1:00 - 2:00','2:00 - 3:00','3:00 - 4:00','4:00 - 5:00','5:00 - 6:00','6:00 - 7:00','7:00 - 8:00','8:00 - 9:00','9:00 - 10:00','10:00 - 11:00','11:00 - 12:00','12:00 - 13:00','13:00 - 14:00','14:00 - 15:00','15:00 - 16:00','16:00 - 17:00','17:00 - 18:00','18:00 - 19:00','19:00 - 20:00','20:00 - 21:00','21:00 - 22:00','22:00 - 23:00','23:00 - 0:00']
+hour = list(range(0, 24))
+data_hour = {hour_format[i] : hour[i] for i in range(len(hour_format))}
 
 def fare(est_fare):
-    return 'Valor: {:.2f} USD'.format(est_fare)
+     return '{:.2f} USD'.format(est_fare)
 
 def main():
     st.title('Tarifa Estimada')
 
-    st.sidebar.header('Parametros del viaje')
-
     option = list(zones_lookup.Zone)
-    hour = list(range(0, 24))
-    pu_location = st.sidebar.selectbox('Origen', option)
-    do_location = st.sidebar.selectbox('Destino', option)
-    trip_hour = st.sidebar.selectbox('Hora del viaje', hour)
+    form = st.form(key='my_form')
+    pu_location = form.selectbox('Origen', option)
+    do_location = form.selectbox('Destino', option)
+    trip_hour = form.selectbox('Hora del viaje', hour_format)
+    val = np.array([data[pu_location], data[do_location], data_hour[trip_hour]])
+    submit = form.form_submit_button('Mostrar')
 
-    val = np.array([data[pu_location], data[do_location], hour[trip_hour]])
-    if st.button('Mostrar'):
+    if submit:    
         try:
             val_def = np.array([
                 df[(df['PULocationID'] == val[0]) & (df['DOLocationID'] == val[1])]['Trip_Distance'].mean(),
