@@ -1,26 +1,6 @@
 import pandas as pd
 import streamlit as st
-# import pickle
 import numpy as np
-'''
-with open('pkl_dis.pkl', 'rb') as pdis:
-    model_dis = pickle.load(pdis)
-
-with open('pkl_dur.pkl', 'rb') as pdur:
-    model_dur = pickle.load(pdur)
-
-with open('pkl_rate.pkl', 'rb') as prate:
-    model_rate = pickle.load(prate)
-
-with open('pkl_tolls.pkl', 'rb') as ptolls:
-    model_tolls = pickle.load(ptolls)
-
-with open('pkl_air.pkl', 'rb') as pair:
-    model_air = pickle.load(pair)
-
-with open('pkl_lin.pkl', 'rb') as plin:
-    model_lin = pickle.load(plin)
-'''
 
 model_dis = pd.read_pickle('pkl_dis.pkl')
 model_dur = pd.read_pickle('pkl_dur.pkl')
