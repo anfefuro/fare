@@ -2,12 +2,12 @@ import pandas as pd
 import streamlit as st
 import numpy as np
 
-model_dis = pd.read_pickle('pkl_dis.pkl')
-model_dur = pd.read_pickle('pkl_dur.pkl')
-model_rate = pd.read_pickle('pkl_rate.pkl')
-model_tolls = pd.read_pickle('pkl_tolls.pkl')
-model_air = pd.read_pickle('pkl_air.pkl')
-model_lin = pd.read_pickle('pkl_lin.pkl')
+model_dis = pd.read_pickle('model_dis', compression='bz2')
+model_dur = pd.read_pickle('model_dur', compression='bz2')
+model_rate = pd.read_pickle('model_rate', compression='bz2')
+model_tolls = pd.read_pickle('model_tolls', compression='bz2')
+model_air = pd.read_pickle('model_air', compression='bz2')
+model_lin = pd.read_pickle('model_lin', compression='bz2')
 
 df = pd.read_parquet('taxi_trip.parquet', 'pyarrow')
 zones_lookup = pd.read_parquet('zones.parquet', 'pyarrow')
