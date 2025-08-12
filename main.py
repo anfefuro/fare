@@ -2,13 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 
-from ipcp import base_transformacion, actualizacion, capitalizacion, actualizacion_y_capitalizacion, input_transformacion
-
-file_dir = f'{os.getcwd()}/'
-
-ipcp_base = pd.read_csv(f'{file_dir}IPCP.csv')
-
-ipcp_base = base_transformacion(ipcp_base)
+from ipcp import input_transformacion
 
 st.title("IPCP Calculadora")
 
