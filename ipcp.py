@@ -219,6 +219,25 @@ json_data = """
 
 ejemplo = pd.read_json(json_data)
 
+def determinador_accion(tipo, fecha_inicial, fecha_pension):
+
+  if tipo == 'Pension':
+    return 'actualizacion_capitalizacion'
+  if tipo == 'Abono' and fecha_inicial < fecha_pension:
+    return 'actualizacion_capitalizacion'
+  if tipo == 'Abono' and fecha_inicial >= fecha_pension:
+    return 'actualizacion'
+  if tipo == 'Reintegro' and fecha_inicial < fecha_pension:
+    return 'actualizacion_capitalizacion'
+  if tipo == 'Reintegro' and fecha_inicial >= fecha_pension:
+    return 'actualizacion'
+  if tipo == 'Pago' and fecha_inicial <= fecha_pension:
+    return 'actualizacion_capitalizacion'
+  if tipo == 'Pago' and fecha_inicial > fecha_pension:
+    return 'actualizacion'
+  else:
+    return None
+
 def input_transformacion(dataFrame):
 
     user_input = dataFrame.copy()
@@ -237,5 +256,7 @@ def input_transformacion(dataFrame):
         user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Pago']['fecha'].values[0]
 
     user_input['valor_inicial'] = user_input[user_input['tipo'] == 'Inicial']['valor'].values[0]
+
+    user_input['accion'] = user_input.apply(lambda x: determinador_accion(x['tipo'], x['fecha_inicial'], x['fecha_pension']), axis=1)
 
     return user_input
