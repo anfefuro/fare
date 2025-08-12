@@ -46,4 +46,7 @@ if st.button("📋 Mostrar datos ingresados"):
 
     st.write(df)
 
+    user_input = input_transformacion(df)
+
+    st.write(user_input)
 
