@@ -2,8 +2,6 @@ import pandas as pd
 import os
 import numpy as np
 
-ipcp_base = pd.read_csv('ipcp.py')
-
 def base_transformacion(dataFrame):
     ipcp_base = dataFrame
 
