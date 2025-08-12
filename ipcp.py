@@ -362,7 +362,7 @@ def input_transformacion(dataFrame):
         valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
 
 
-    #   nuevo_valor.append(valor_referencia)
+      nuevo_valor.append(valor_referencia)
 
     # user_input['nuevo_valor'] = nuevo_valor
     # user_input = user_input[['fecha', 'tipo', 'valor', 'accion', 'nuevo_valor']]
