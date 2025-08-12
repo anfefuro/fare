@@ -38,8 +38,6 @@ if st.button("📋 Mostrar datos ingresados"):
     # Convertir la lista de diccionarios en un DataFrame
     df = pd.DataFrame(datos)
 
-    st.write(df)
-
     user_input = input_transformacion(df)
 
     st.write(user_input)
