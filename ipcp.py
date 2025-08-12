@@ -261,19 +261,21 @@ def input_transformacion(dataFrame):
 
     nuevo_valor = []
     valor_referencia = 0
-    # for i in range(len(user_input)):
+    for i in range(len(user_input)):
 
 
-    #   valor = round(user_input['valor'][i], 2)
-    #   fecha_inicial = user_input['fecha_inicial'][i]
-    #   fecha_final = user_input['fecha'][i]
-    #   fecha_pension = user_input['fecha_pension'][i]
-    #   trr = user_input['trr'][i]
-    #   tipo = user_input['tipo'][i]
-    #   accion = user_input['accion'][i]
-    #   valor_anterior = user_input['valor_anterior'][i]
-    #   valor_inicial = user_input['valor_inicial'][i]
-    #   tipo_anterior = user_input['tipo_anterior'][i]
+      valor = round(user_input['valor'][i], 2)
+      fecha_inicial = user_input['fecha_inicial'][i]
+      fecha_final = user_input['fecha'][i]
+      fecha_pension = user_input['fecha_pension'][i]
+      trr = user_input['trr'][i]
+      tipo = user_input['tipo'][i]
+      accion = user_input['accion'][i]
+      valor_anterior = user_input['valor_anterior'][i]
+      valor_inicial = user_input['valor_inicial'][i]
+      tipo_anterior = user_input['tipo_anterior'][i]
+
+      print(valor, fecha_inicial, fecha_final, fecha_pension, trr, tipo, accion, valor_anterior, valor_inicial, tipo_anterior)
 
     #   if accion == None:
     #     valor_referencia = valor
