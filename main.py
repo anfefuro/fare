@@ -20,7 +20,7 @@ st.write("""Documento Base""")
 st.write(ipcp_base.head(5))
 
 # Input de usuario
-st.write("""Ingreso de Valor""")
+st.write("""## Ingreso de Valor""")
 valor = st.text_input("Ingrese los datos en el formato requerido")
 
 
