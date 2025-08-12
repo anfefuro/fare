@@ -10,6 +10,8 @@ ipcp_base = pd.read_csv(f'{file_dir}IPCP.csv')
 
 ipcp_base = base_transformacion(ipcp_base)
 
+print(ipcp_base.head(5))
+
 st.write("""
 # My first app
 Hello *world!*
