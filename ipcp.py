@@ -234,9 +234,9 @@ def input_transformacion(dataFrame):
     user_input['tipo_anterior'] = user_input['tipo'].shift(1)
 
     try:
-    user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Pension']['fecha_final'].values[0]
+        user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Pension']['fecha_final'].values[0]
     except:
-    user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Pago']['fecha_final'].values[0]
+        user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Pago']['fecha_final'].values[0]
 
     user_input['valor_inicial'] = user_input[user_input['tipo'] == 'Inicial']['valor'].values[0]
 
