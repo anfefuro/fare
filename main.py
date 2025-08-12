@@ -10,40 +10,34 @@ ipcp_base = pd.read_csv(f'{file_dir}IPCP.csv')
 
 ipcp_base = base_transformacion(ipcp_base)
 
-st.write("""
-# IPCP Calculadora
-Hello *world!*
-""")
-
-# Mostrar las primeras 5 filas del documento base con streamlit
-st.write("""Documento Base""")
-st.write(ipcp_base.head(5))
-
-st.title("Formulario dinámico")
+st.title("IPCP Calculadora")
 
 # Inicializar el contador de bloques en session_state
 if "num_bloques" not in st.session_state:
     st.session_state.num_bloques = 1
 
 # Botón para agregar otro bloque
-if st.button("➕ Agregar otro bloque"):
+if st.button("➕ Agregar evento"):
     st.session_state.num_bloques += 1
 
 # Mostrar cada bloque de 3 inputs
 for i in range(st.session_state.num_bloques):
-    st.subheader(f"Bloque {i+1}")
-    st.text_input(f"Nombre {i+1}", key=f"nombre_{i}")
-    st.number_input(f"Edad {i+1}", key=f"edad_{i}", min_value=0, max_value=120)
-    st.text_input(f"Ciudad {i+1}", key=f"ciudad_{i}")
+    st.subheader(f"Evento {i+1}")
+    st.text_input(f"Valor {i+1}", key=f"valor_{i}")
+    st.date_input(f"Fecha {i+1}", key=f"fecha_{i}")
+    st.selectbox(f"Tipo {i+1}", key=f"tipo_{i}", options=['Inicial', 'Pension', 'Abono', 'Reintegro', 'Pago'])
+    st.number_input(f"TRR {i+1}", key=f"trr_{i}", min_value=0.0, max_value=5.0, step=0.01)
+
 
 # Botón para mostrar resultados
 if st.button("📋 Mostrar datos ingresados"):
     datos = []
     for i in range(st.session_state.num_bloques):
         datos.append({
-            "nombre": st.session_state[f"nombre_{i}"],
-            "edad": st.session_state[f"edad_{i}"],
-            "ciudad": st.session_state[f"ciudad_{i}"]
+            "valor": st.session_state[f"valor_{i}"],
+            "fecha": st.session_state[f"fecha_{i}"],
+            "tipo": st.session_state[f"tipo_{i}"],
+            "trr": st.session_state[f"trr_{i}"],
         })
     st.write(datos)
 
