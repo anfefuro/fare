@@ -40,40 +40,10 @@ if st.button("📋 Mostrar datos ingresados"):
             "tipo": st.session_state[f"tipo_{i}"],
             "trr": st.session_state[f"trr_{i}"],
         })
-    st.write(datos)
+    
+    # Convertir la lista de diccionarios en un DataFrame
+    df = pd.DataFrame(datos)
 
-import locale
-
-# Configurar formato local (cambia 'es_CO.UTF-8' según tu región)
-locale.setlocale(locale.LC_ALL, 'es_CO.UTF-8')
-
-st.title("Entrada con formato moneda")
-
-# Recuperar valor anterior (para que persista)
-if "monto_str" not in st.session_state:
-    st.session_state.monto_str = ""
-
-# Input de texto para simular number_input con formato
-monto_str = st.text_input(
-    "Monto",
-    value=st.session_state.monto_str,
-    key="monto_str"
-)
-
-# Quitar caracteres no numéricos para convertir
-valor_numerico = monto_str.replace("$", "").replace(".", "").replace(",", ".").replace("'", "").strip()
-
-try:
-    monto_float = float(valor_numerico) if valor_numerico else 0.0
-except ValueError:
-    monto_float = 0.0
-
-# Formatear en estilo moneda
-if monto_str:
-    monto_formateado = locale.currency(monto_float, grouping=True)
-    st.session_state.monto_str = monto_formateado
-
-st.write(f"💾 Valor como float: {monto_float}")
-
+    st.write(df)
 
 
