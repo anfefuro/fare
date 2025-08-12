@@ -364,8 +364,8 @@ def input_transformacion(dataFrame):
 
       nuevo_valor.append(valor_referencia)
 
-    # user_input['nuevo_valor'] = nuevo_valor
-    # user_input = user_input[['fecha', 'tipo', 'valor', 'accion', 'nuevo_valor']]
-    # user_input['nuevo_valor'] = user_input['nuevo_valor'].apply(lambda x: round(x, 2))
+    user_input['nuevo_valor'] = nuevo_valor
+    user_input = user_input[['fecha', 'tipo', 'valor', 'accion', 'nuevo_valor']]
+    user_input['nuevo_valor'] = user_input['nuevo_valor'].apply(lambda x: round(x, 2))
 
-    return nuevo_valor # user_input
+    return user_input
