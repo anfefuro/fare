@@ -224,8 +224,8 @@ def input_transformacion(dataFrame):
     user_input = dataFrame.copy()
 
     # Se genera la columna fecha final y valor anterior
-    user_input = user_input.sort_values('fecha_final').reset_index(drop=True)
-    user_input['fecha_inicial'] = user_input['fecha_final'].shift(1)
+    user_input = user_input.sort_values('fecha').reset_index(drop=True)
+    user_input['fecha_inicial'] = user_input['fecha'].shift(1)
     user_input['valor'] = user_input['valor'].fillna(0)
     user_input['valor_anterior'] = user_input['valor'].shift(1)
     user_input['valor_anterior'] = user_input['valor_anterior'].fillna(0)
