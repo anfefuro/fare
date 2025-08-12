@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 def base_transformacion(dataFrame):
-    ipcp_base = dataFrame
+    ipcp_base = dataFrame.copy()
 
     ipcp_base = ipcp_base[['PERIODO\n(DD-MM-AAAA)','VALOR IPC','VALOR IPCP','FECHA INICIO','FECHA FINAL','VALOR IPCP.1','VALOR IPCP-1']]
     ipcp_base.rename(columns={
@@ -221,7 +221,7 @@ ejemplo = pd.read_json(json_data)
 
 def input_transformacion(dataFrame):
 
-    user_input = dataFrame
+    user_input = dataFrame.copy()
 
     # Se genera la columna fecha final y valor anterior
     user_input = user_input.sort_values('fecha_final').reset_index(drop=True)
