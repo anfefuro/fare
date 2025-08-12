@@ -6,7 +6,7 @@ from ipcp import base_transformacion, actualizacion, capitalizacion, actualizaci
 
 file_dir = f'{os.getcwd()}/'
 
-ipcp_base = pd.read_csv(f'{file_dir}ipcp.csv')
+ipcp_base = pd.read_csv(f'{file_dir}IPCP.csv')
 
 ipcp_base = base_transformacion(ipcp_base)
 
