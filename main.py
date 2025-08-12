@@ -27,8 +27,8 @@ for i in range(st.session_state.num_bloques):
     st.number_input(f"Valor {i+1}", key=f"valor_{i}", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
     st.date_input(f"Fecha {i+1}", key=f"fecha_{i}", min_value=pd.Timestamp('1950-01-01'))
     st.selectbox(f"Tipo {i+1}", key=f"tipo_{i}", options=['Inicial', 'Pension', 'Abono', 'Reintegro', 'Pago'])
-    st.number_input(f"TRR {i+1}", key=f"trr_{i}", min_value=0, max_value=5, step=1, help="Ingrese el porcentaje de TRR, por ejemplo, 3 para 3%")
-
+    # La TRR tendran un valor por defecto de 4
+    st.number_input(f"TRR {i+1}", key=f"trr_{i}", min_value=0, max_value=5, step=1, help="Ingrese el porcentaje de TRR, por ejemplo, 3 para 3%", value=4)
 
 # Botón para mostrar resultados
 if st.button("📋 Mostrar datos ingresados"):
