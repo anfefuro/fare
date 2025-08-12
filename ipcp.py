@@ -266,7 +266,7 @@ def input_transformacion(dataFrame):
 
       valor = round(ejemplo['valor'][i], 2)
       fecha_inicial = ejemplo['fecha_inicial'][i]
-      fecha_final = ejemplo['fecha_final'][i]
+      fecha_final = ejemplo['fecha'][i]
       fecha_pension = ejemplo['fecha_pension'][i]
       trr = ejemplo['trr'][i]
       tipo = ejemplo['tipo'][i]
