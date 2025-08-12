@@ -23,8 +23,8 @@ if st.button("➕ Agregar evento"):
 # Mostrar cada bloque de 3 inputs
 for i in range(st.session_state.num_bloques):
     st.subheader(f"Evento {i+1}")
-    st.text_input(f"Valor {i+1}", key=f"valor_{i}")
-    # Permitir fechas desde 1950
+    # Este valor es un entero, sin embargo el usuario puede verlo en formato moneda con dos decimales
+    st.number_input(f"Valor {i+1}", key=f"valor_{i}", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
     st.date_input(f"Fecha {i+1}", key=f"fecha_{i}", min_value=pd.Timestamp('1950-01-01'))
     st.selectbox(f"Tipo {i+1}", key=f"tipo_{i}", options=['Inicial', 'Pension', 'Abono', 'Reintegro', 'Pago'])
     st.number_input(f"TRR {i+1}", key=f"trr_{i}", min_value=0, max_value=5, step=1, help="Ingrese el porcentaje de TRR, por ejemplo, 3 para 3%")
