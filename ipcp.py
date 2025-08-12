@@ -362,7 +362,7 @@ def input_transformacion(dataFrame):
     user_input['accion'] = user_input.apply(lambda x: determinador_accion(x['tipo'], x['fecha_inicial'], x['fecha_pension']), axis=1)
 
     user_input['nuevo_valor'] = nuevo_valor
-    user_input = user_input[['fecha_final', 'tipo', 'valor', 'accion', 'nuevo_valor']].rename(columns={'fecha_final':'fecha'})
+    user_input = user_input[['fecha', 'tipo', 'valor', 'accion', 'nuevo_valor']]
     user_input['nuevo_valor'] = user_input['nuevo_valor'].apply(lambda x: round(x, 2))
 
     return user_input
