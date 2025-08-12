@@ -2,11 +2,8 @@ import pandas as pd
 import os
 import numpy as np
 
-file_dir = f'{os.getcwd()}/'
-
-ipcp_base = pd.read_csv(f'{file_dir}IPCP.csv')
-
 def base_transformacion(dataFrame):
+
     ipcp_base = dataFrame.copy()
 
     ipcp_base = ipcp_base[['PERIODO\n(DD-MM-AAAA)','VALOR IPC','VALOR IPCP','FECHA INICIO','FECHA FINAL','VALOR IPCP.1','VALOR IPCP-1']]
@@ -32,9 +29,13 @@ def base_transformacion(dataFrame):
 
     return ipcp_base
 
-def actualizacion(valor_actualizar, fecha_inicial, fecha_final):
+file_dir = f'{os.getcwd()}/'
 
-  ipcp_base = base_transformacion(ipcp_base)
+ipcp_base = pd.read_csv(f'{file_dir}IPCP.csv')
+
+ipcp_base = base_transformacion(ipcp_base)
+
+def actualizacion(valor_actualizar, fecha_inicial, fecha_final):
 
   # Valores usuario
   valor_actualizar = float(valor_actualizar)
@@ -135,8 +136,6 @@ def capitalizacion(valor_capitalizar, TRR, fecha_inicial, fecha_final):
   return valor_capitalizado
 
 def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, fecha_final, TRR):
-
-  ipcp_base = base_transformacion(ipcp_base)
 
   # Valores usuario
   valor_actualizar_capitalizar = float(valor_actualizar_capitalizar)
