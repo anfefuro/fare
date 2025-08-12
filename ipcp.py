@@ -4,28 +4,31 @@ import numpy as np
 
 ipcp_base = pd.read_csv('ipcp.py')
 
-def base_transformacion()
+def base_transformacion(dataFrame):
+    ipcp_base = dataFrame
 
-ipcp_base = ipcp_base[['PERIODO\n(DD-MM-AAAA)','VALOR IPC','VALOR IPCP','FECHA INICIO','FECHA FINAL','VALOR IPCP.1','VALOR IPCP-1']]
-ipcp_base.rename(columns={
-    'PERIODO\n(DD-MM-AAAA)':'periodo',
-    'VALOR IPC':'ipc',
-    'VALOR IPCP':'ipcp',
-    'FECHA INICIO':'fecha_inicio',
-    'FECHA FINAL':'fecha_final',
-    'VALOR IPCP.1':'ipcp.1',
-    'VALOR IPCP-1':'ipcp-1'
-}, inplace=True)
+    ipcp_base = ipcp_base[['PERIODO\n(DD-MM-AAAA)','VALOR IPC','VALOR IPCP','FECHA INICIO','FECHA FINAL','VALOR IPCP.1','VALOR IPCP-1']]
+    ipcp_base.rename(columns={
+        'PERIODO\n(DD-MM-AAAA)':'periodo',
+        'VALOR IPC':'ipc',
+        'VALOR IPCP':'ipcp',
+        'FECHA INICIO':'fecha_inicio',
+        'FECHA FINAL':'fecha_final',
+        'VALOR IPCP.1':'ipcp.1',
+        'VALOR IPCP-1':'ipcp-1'
+    }, inplace=True)
 
-# ------ CAMBIOS BASE --------
-# Transformar la columna Periodo a fecha con formato date %Y-%m-%d
-ipcp_base['periodo'] = pd.to_datetime(ipcp_base['periodo'], format='%d/%m/%Y')
-ipcp_base['fecha_inicio'] = pd.to_datetime(ipcp_base['fecha_inicio'], format='%d/%m/%Y')
-ipcp_base['fecha_final'] = pd.to_datetime(ipcp_base['fecha_final'], format='%d/%m/%Y')
-# Formato de las columnas VALOR IPCP, VALOR IPCP.1, VALOR IPCP-1
-ipcp_base['ipcp'] = ipcp_base['ipcp'].str.replace(',', '').astype(float)
-ipcp_base['ipcp.1'] = ipcp_base['ipcp.1'].str.replace(',', '.').astype(float)
-ipcp_base['ipcp-1'] = ipcp_base['ipcp-1'].str.replace(',', '.').astype(float)
+    # ------ CAMBIOS BASE --------
+    # Transformar la columna Periodo a fecha con formato date %Y-%m-%d
+    ipcp_base['periodo'] = pd.to_datetime(ipcp_base['periodo'], format='%d/%m/%Y')
+    ipcp_base['fecha_inicio'] = pd.to_datetime(ipcp_base['fecha_inicio'], format='%d/%m/%Y')
+    ipcp_base['fecha_final'] = pd.to_datetime(ipcp_base['fecha_final'], format='%d/%m/%Y')
+    # Formato de las columnas VALOR IPCP, VALOR IPCP.1, VALOR IPCP-1
+    ipcp_base['ipcp'] = ipcp_base['ipcp'].str.replace(',', '').astype(float)
+    ipcp_base['ipcp.1'] = ipcp_base['ipcp.1'].str.replace(',', '.').astype(float)
+    ipcp_base['ipcp-1'] = ipcp_base['ipcp-1'].str.replace(',', '.').astype(float)
+
+    return ipcp_base
 
 def actualizacion(valor_actualizar, fecha_inicial, fecha_final):
 
@@ -218,17 +221,23 @@ json_data = """
 
 ejemplo = pd.read_json(json_data)
 
-# Se genera la columna fecha final y valor anterior
-ejemplo = ejemplo.sort_values('fecha_final').reset_index(drop=True)
-ejemplo['fecha_inicial'] = ejemplo['fecha_final'].shift(1)
-ejemplo['valor'] = ejemplo['valor'].fillna(0)
-ejemplo['valor_anterior'] = ejemplo['valor'].shift(1)
-ejemplo['valor_anterior'] = ejemplo['valor_anterior'].fillna(0)
-ejemplo['tipo_anterior'] = ejemplo['tipo'].shift(1)
+def input_transformacion(dataFrame):
 
-try:
-  ejemplo['fecha_pension'] = ejemplo[ejemplo['tipo'] == 'Pension']['fecha_final'].values[0]
-except:
-  ejemplo['fecha_pension'] = ejemplo[ejemplo['tipo'] == 'Pago']['fecha_final'].values[0]
+    user_input = dataFrame
 
-ejemplo['valor_inicial'] = ejemplo[ejemplo['tipo'] == 'Inicial']['valor'].values[0]
+    # Se genera la columna fecha final y valor anterior
+    user_input = user_input.sort_values('fecha_final').reset_index(drop=True)
+    user_input['fecha_inicial'] = user_input['fecha_final'].shift(1)
+    user_input['valor'] = user_input['valor'].fillna(0)
+    user_input['valor_anterior'] = user_input['valor'].shift(1)
+    user_input['valor_anterior'] = user_input['valor_anterior'].fillna(0)
+    user_input['tipo_anterior'] = user_input['tipo'].shift(1)
+
+    try:
+    user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Pension']['fecha_final'].values[0]
+    except:
+    user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Pago']['fecha_final'].values[0]
+
+    user_input['valor_inicial'] = user_input[user_input['tipo'] == 'Inicial']['valor'].values[0]
+
+    return user_input
