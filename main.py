@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import io
 
 from ipcp import input_transformacion
 
@@ -72,12 +73,21 @@ if st.button("📋 Mostrar datos ingresados"):
     # Mostrar el resultado en la interfaz
     st.write(resultado)
     
-    # Agregar botón de descarga para el DataFrame de resultados
-    csv = resultado.to_csv(index=False)
+    # Crear un buffer en memoria para el archivo Excel
+    buffer = io.BytesIO()
+    
+    # Guardar el DataFrame en formato Excel
+    with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+        resultado.to_excel(writer, index=False, sheet_name='Resultados')
+    
+    # Establecer el puntero al inicio del buffer
+    buffer.seek(0)
+    
+    # Agregar botón de descarga para el DataFrame de resultados en formato Excel
     st.download_button(
-        label="💾 Descargar resultados",
-        data=csv,
-        file_name="resultados_ipcp.csv",
-        mime="text/csv",
+        label="💾 Descargar resultados (Excel)",
+        data=buffer,
+        file_name="resultados_ipcp.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
 
