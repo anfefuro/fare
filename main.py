@@ -66,7 +66,18 @@ if st.button("📋 Mostrar datos ingresados"):
     # Convertir la lista de diccionarios en un DataFrame
     df = pd.DataFrame(datos)
 
-    user_input = input_transformacion(df)
+    # Procesar los datos con la función input_transformacion
+    resultado = input_transformacion(df)
 
-    st.write(user_input)
+    # Mostrar el resultado en la interfaz
+    st.write(resultado)
+    
+    # Agregar botón de descarga para el DataFrame de resultados
+    csv = resultado.to_csv(index=False)
+    st.download_button(
+        label="💾 Descargar resultados",
+        data=csv,
+        file_name="resultados_ipcp.csv",
+        mime="text/csv",
+    )
 
