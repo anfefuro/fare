@@ -30,7 +30,7 @@ for idx, i in enumerate(st.session_state.indices_eventos):
     col1, col2 = st.columns([0.95, 0.05])
     
     with col1:
-        st.subheader(f"Evento {idx+1}")
+        st.subheader(f"Movimiento {idx+1}")
     
     with col2:
         # Botón de eliminar con icono de bote de basura
@@ -46,7 +46,7 @@ for idx, i in enumerate(st.session_state.indices_eventos):
     st.number_input(f"TRR {idx+1}", key=f"trr_{i}", min_value=0, max_value=5, step=1, help="Ingrese el porcentaje de TRR, por ejemplo, 3 para 3%", value=4)
 
 # Botón para agregar otro bloque
-if st.button("➕ Agregar evento"):
+if st.button("➕ Agregar movimiento"):
     # Agregar un nuevo índice (mayor que los existentes)
     nuevo_indice = max(st.session_state.indices_eventos + [-1]) + 1
     st.session_state.indices_eventos.append(nuevo_indice)
