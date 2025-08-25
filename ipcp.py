@@ -6,9 +6,9 @@ def base_transformacion(dataFrame):
 
     ipcp_base = dataFrame.copy()
 
-    ipcp_base = ipcp_base[['PERIODO (DD-MM-AAAA)','VALOR IPC','VALOR IPCP','FECHA INICIO','FECHA FINAL','VALOR IPCP.1','VALOR IPCP-1']]
+    ipcp_base = ipcp_base[['PERIODO(DD-MM-AAAA)','VALOR IPC','VALOR IPCP','FECHA INICIO','FECHA FINAL','VALOR IPCP.1','VALOR IPCP-1']]
     ipcp_base.rename(columns={
-        'PERIODO (DD-MM-AAAA)':'periodo',
+        'PERIODO(DD-MM-AAAA)':'periodo',
         'VALOR IPC':'ipc',
         'VALOR IPCP':'ipcp',
         'FECHA INICIO':'fecha_inicio',
