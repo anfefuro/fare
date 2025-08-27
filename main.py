@@ -110,5 +110,5 @@ if st.button("📋 Mostrar resultados de actualización"):
     # Llamar a la función de actualización
     actualizacion = actualizacion(valor, fecha_inicial, fecha_final)
 
-    # Mostrar el resultado
-    st.write(actualizacion)
+    # Mostrar el resultado de la actualización con un formato de texto grande y como moneda
+    st.write(f"El valor actualizado es: **{actualizacion:,.2f}**")
