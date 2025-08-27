@@ -326,12 +326,12 @@ def input_transformacion(dataFrame):
     fecha_final = pd.to_datetime(ipcp_base['fecha_final'].max(), format='%Y-%m-%d')
     fecha_inicio = pd.to_datetime(ipcp_base['fecha_inicio'].min(), format='%Y-%m-%d')
 
-    if user_input['fecha_inicial'].max() > fecha_final:
-        user_input['fecha_inicial'] = fecha_final
+    # if user_input['fecha_inicial'].max() > fecha_final:
+    #     user_input['fecha_inicial'] = fecha_final
 
-    # Si la fecha que ingresa el usuario es mas antigua que la primera fecha de la base, se toma la primera fecha de la base
-    if user_input['fecha_inicial'].min() < fecha_inicio:
-        user_input['fecha_inicial'] = fecha_inicio
+    # # Si la fecha que ingresa el usuario es mas antigua que la primera fecha de la base, se toma la primera fecha de la base
+    # if user_input['fecha_inicial'].min() < fecha_inicio:
+    #     user_input['fecha_inicial'] = fecha_inicio
 
     try:
         user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Pension']['fecha'].values[0]
