@@ -437,7 +437,7 @@ def input_transformacion(dataFrame):
       nuevo_valor.append(valor_referencia)
 
     user_input['nuevo_valor'] = nuevo_valor
-    user_input = user_input[['fecha', 'tipo', 'valor', 'accion', 'nuevo_valor']]
+    user_input = user_input[['fecha', 'tipo', 'valor', 'accion', 'nuevo_valor', 'descripcion']]
     user_input['nuevo_valor'] = user_input['nuevo_valor'].apply(lambda x: round(x, 2))
 
     # Vamos a dar formato de moneda ($ 7'000.000,00) a las columnas 'valor' y 'nuevo_valor'
