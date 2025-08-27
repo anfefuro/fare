@@ -322,9 +322,13 @@ def input_transformacion(dataFrame):
     user_input['valor_anterior'] = user_input['valor_anterior'].fillna(0)
     user_input['tipo_anterior'] = user_input['tipo'].shift(1)
 
-    # Si la fecha que ingresa el usuario es mas reciente que la ultima fecha de la base, se toma la ultima fecha de la base
+    user_input['fecha_inicial'] = pd.to_datetime(user_input['fecha_inicial'])
+    ipcp_base['fecha_final']   = pd.to_datetime(ipcp_base['fecha_final'])
+    ipcp_base['fecha_inicio']   = pd.to_datetime(ipcp_base['fecha_inicio'])
+
     if user_input['fecha_inicial'].max() > ipcp_base['fecha_final'].max():
         user_input['fecha_inicial'] = ipcp_base['fecha_final'].max()
+
     # Si la fecha que ingresa el usuario es mas antigua que la primera fecha de la base, se toma la primera fecha de la base
     if user_input['fecha_inicial'].min() < ipcp_base['fecha_inicio'].min():
         user_input['fecha_inicial'] = ipcp_base['fecha_inicio'].min()

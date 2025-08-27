@@ -65,6 +65,7 @@ if st.button("📋 Mostrar datos ingresados"):
             "fecha": st.session_state[f"fecha_{i}"],
             "tipo": st.session_state[f"tipo_{i}"],
             "trr": st.session_state[f"trr_{i}"],
+            "descripcion": st.session_state[f"descripcion_{i}"]
         })
     
     # Convertir la lista de diccionarios en un DataFrame
