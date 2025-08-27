@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import io
 
-from ipcp import input_transformacion
+from ipcp import input_transformacion, actualizacion
 
 st.title("IPCP Calculadora")
 
@@ -91,3 +91,24 @@ if st.button("📋 Mostrar datos ingresados"):
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
 
+st.title("Calculadora de Actualización")
+
+# Creamos un bloque más, pero aislado del resto
+with st.container():
+    # Este valor es un entero, sin embargo el usuario puede verlo en formato moneda con dos decimales
+    st.number_input(f"Valor", key=f"valor", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
+    st.date_input(f"Fecha Inicial", key=f"fecha_inicial", min_value=pd.Timestamp('1950-01-01'))
+    st.date_input(f"Fecha Final", key=f"fecha_final", min_value=pd.Timestamp('1950-01-01'))
+
+# Botón para mostrar resultados de actualización
+if st.button("📋 Mostrar resultados de actualización"):
+    # Obtener los valores de entrada
+    valor = st.session_state["valor"]
+    fecha_inicial = st.session_state["fecha_inicial"]
+    fecha_final = st.session_state["fecha_final"]
+
+    # Llamar a la función de actualización
+    actualizacion = actualizacion(valor, fecha_inicial, fecha_final)
+
+    # Mostrar el resultado
+    st.write(actualizacion)
