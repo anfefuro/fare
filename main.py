@@ -46,6 +46,9 @@ for idx, i in enumerate(st.session_state.indices_eventos):
     # La TRR tendran un valor por defecto de 4
     st.number_input(f"TRR {idx+1}", key=f"trr_{i}", min_value=0, max_value=5, step=1, help="Ingrese el porcentaje de TRR, por ejemplo, 3 para 3%", value=4)
 
+    # Al final de cada bloque, agregar un cuadro de texto donde el usuario pueda ingresar una descripción
+    st.text_input(f"Descripción {idx+1}", key=f"descripcion_{i}", help="Descripción del movimiento")
+
 # Botón para agregar otro bloque
 if st.button("➕ Agregar movimiento"):
     # Agregar un nuevo índice (mayor que los existentes)
