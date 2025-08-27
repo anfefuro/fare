@@ -315,15 +315,15 @@ def input_transformacion(dataFrame):
     user_input = dataFrame.copy()
 
      # Transoformar la fecha de referencia como datetime año/mes/dia
-    fecha_final = pd.to_datetime(ipcp_base['fecha_final'].max(), format='%Y-%m-%d')
-    fecha_inicio = pd.to_datetime(ipcp_base['fecha_inicio'].min(), format='%Y-%m-%d')
+    fecha_final = ipcp_base['fecha_final'].max().date()
+    fecha_inicio = ipcp_base['fecha_inicio'].min().date()
 
-    if user_input['fecha'].max().date() > fecha_final.date():
-        user_input['fecha'] = fecha_final.date()
+    if user_input['fecha'].max() > fecha_final:
+        user_input['fecha'] = fecha_final
 
     # Si la fecha que ingresa el usuario es mas antigua que la primera fecha de la base, se toma la primera fecha de la base
-    if user_input['fecha'].min().date() < fecha_inicio.date():
-        user_input['fecha'] = fecha_inicio.date()
+    if user_input['fecha'].min() < fecha_inicio:
+        user_input['fecha'] = fecha_inicio
 
     # Se genera la columna fecha final y valor anterior
     user_input = user_input.sort_values('fecha').reset_index(drop=True)
