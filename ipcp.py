@@ -323,8 +323,6 @@ def input_transformacion(dataFrame):
     user_input['tipo_anterior'] = user_input['tipo'].shift(1)
 
     user_input['fecha_inicial'] = pd.to_datetime(user_input['fecha_inicial'])
-    ipcp_base['fecha_final']   = pd.to_datetime(ipcp_base['fecha_final'])
-    ipcp_base['fecha_inicio']   = pd.to_datetime(ipcp_base['fecha_inicio'])
 
     if user_input['fecha_inicial'].max() > ipcp_base['fecha_final'].max():
         user_input['fecha_inicial'] = ipcp_base['fecha_final'].max()
