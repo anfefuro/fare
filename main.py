@@ -95,6 +95,17 @@ if st.button("📋 Mostrar datos ingresados"):
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
 
+# Botón para imprimir la página
+if st.button("🖨️ Imprimir página"):
+    st.write("Imprimiendo página...")
+    # Aquí puedes agregar la lógica para imprimir la página, por ejemplo, usando JavaScript
+    st.markdown("""
+        <script>
+            window.print();
+        </script>
+    """, unsafe_allow_html=True)
+
+
 st.title("Calculadora de Actualización")
 
 # Creamos un bloque más, pero aislado del resto
