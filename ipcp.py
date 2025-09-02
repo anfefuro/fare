@@ -300,7 +300,7 @@ def determinador_accion(tipo, fecha_inicial, fecha_pension):
   if tipo == 'Abono' and fecha_inicial >= fecha_pension:
     return 'actualizacion'
   if tipo == 'Reintegro' and fecha_inicial < fecha_pension:
-    return 'actualizacion_capitalizacion_inversa'
+    return 'actualizacion_capitalizacion'
   if tipo == 'Reintegro' and fecha_inicial >= fecha_pension:
     return 'actualizacion'
   if tipo == 'Pago' and fecha_inicial <= fecha_pension:
@@ -390,16 +390,16 @@ def input_transformacion(dataFrame):
 
       #### REINTEGRO ####
       #### ACT / CAP ####
-      if accion == 'actualizacion_capitalizacion_inversa' and tipo == 'Reintegro' and tipo_anterior == 'Reintegro':
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion_inversa(valor_mas_reintegro, fecha_inicial, fecha_final, trr)
-      if accion == 'actualizacion_capitalizacion_inversa' and tipo == 'Reintegro' and tipo_anterior == 'Abono':
+        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, trr)
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion_inversa(valo_menos_abono, fecha_inicial, fecha_final, trr)
-      if accion == 'actualizacion_capitalizacion_inversa' and tipo == 'Reintegro' and tipo_anterior == 'Pension':
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Pension':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion_inversa(valo_menos_abono, fecha_inicial, fecha_final, trr)
-      if accion == 'actualizacion_capitalizacion_inversa' and tipo == 'Reintegro' and tipo_anterior == 'Inicial':
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Inicial':
         pass
         ########### ROMPER GENERAR ALERTA #############
       #### ACT ####
