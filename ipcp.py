@@ -338,7 +338,7 @@ def input_transformacion(dataFrame):
     except:
         user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Pago']['fecha'].values[0]
 
-    user_input['valor_inicial'] = user_input[user_input['tipo'] == 'Inicial']['valor'].values[0]
+    user_input['valor_inicial'] = user_input[user_input['tipo'] == 'Valor FC']['valor'].values[0]
 
     user_input['accion'] = user_input.apply(lambda x: determinador_accion(x['tipo'], x['fecha_inicial'], x['fecha_pension']), axis=1)
 
@@ -374,7 +374,7 @@ def input_transformacion(dataFrame):
         valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Abono' and tipo_anterior == 'Pension':
         valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
-      if accion == 'actualizacion_capitalizacion' and tipo == 'Abono' and tipo_anterior == 'Inicial':
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Abono' and tipo_anterior == 'Valor FC':
         valo_menos_abono = valor_referencia - valor
         valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
       #### ACT ####
@@ -399,7 +399,7 @@ def input_transformacion(dataFrame):
       if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Pension':
         valo_menos_abono = valor_referencia + valor
         valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
-      if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Inicial':
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Valor FC':
         pass
         ########### ROMPER GENERAR ALERTA #############
       #### ACT ####
@@ -424,7 +424,7 @@ def input_transformacion(dataFrame):
       if accion == 'actualizacion_capitalizacion' and tipo == 'Pago' and tipo_anterior == 'Pension':
         valo_menos_abono = valor_referencia + valor
         valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
-      if accion == 'actualizacion_capitalizacion' and tipo == 'Pago' and tipo_anterior == 'Inicial':
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Pago' and tipo_anterior == 'Valor FC':
         valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
       #### ACT ####
       if accion == 'actualizacion' and tipo == 'Pago' and tipo_anterior == 'Reintegro':
