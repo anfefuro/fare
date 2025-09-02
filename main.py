@@ -42,7 +42,7 @@ for idx, i in enumerate(st.session_state.indices_eventos):
     # Este valor es un entero, sin embargo el usuario puede verlo en formato moneda con dos decimales
     st.number_input(f"Valor {idx+1}", key=f"valor_{i}", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
     st.date_input(f"Fecha {idx+1}", key=f"fecha_{i}", min_value=pd.Timestamp('1950-01-01'))
-    st.selectbox(f"Tipo {idx+1}", key=f"tipo_{i}", options=['Valor Fecha Corte', 'Valor Fecha Riesgo', 'Abono', 'Reintegro', 'Pago'])
+    st.selectbox(f"Tipo {idx+1}", key=f"tipo_{i}", options=['Valor Fecha Corte', 'Valor Fecha Riesgo', 'Abono', 'Reintegro', 'Valor a Pagar'])
     # La TRR tendran un valor por defecto de 4
     st.number_input(f"TRR {idx+1}", key=f"trr_{i}", min_value=0, max_value=5, step=1, help="Ingrese el porcentaje de TRR, por ejemplo, 3 para 3%", value=4)
 
