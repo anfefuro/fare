@@ -307,9 +307,7 @@ def determinador_accion(tipo, fecha_inicial, fecha_pension, fecha_cobro):
     return 'actualizacion_capitalizacion'
   if tipo == 'Valor a Pagar' and fecha_inicial > fecha_pension:
     return 'actualizacion'
-  if tipo == 'Valor Fecha Cobro' and fecha_inicial <= fecha_cobro:
-    return 'actualizacion'
-  if tipo == 'Valor Fecha Cobro' and fecha_inicial > fecha_cobro:
+  if tipo == 'Valor Fecha Cobro':
     return 'actualizacion'
   if tipo == 'Valor a Pagar Recursos Propios' and fecha_inicial <= fecha_cobro:
     return 'actualizacion'
