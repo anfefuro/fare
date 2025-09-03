@@ -291,7 +291,7 @@ def actualizacion_y_capitalizacion_inversa(valor_actualizar_capitalizar, fecha_i
 
   return valor_actualizado_capitalizado
 
-def determinador_accion(tipo, fecha_inicial, fecha_pension):
+def determinador_accion(tipo, fecha_inicial, fecha_pension, fecha_cobro):
 
   if tipo == 'Valor Fecha Riesgo':
     return 'actualizacion_capitalizacion'
@@ -307,6 +307,14 @@ def determinador_accion(tipo, fecha_inicial, fecha_pension):
     return 'actualizacion_capitalizacion'
   if tipo == 'Valor a Pagar' and fecha_inicial > fecha_pension:
     return 'actualizacion'
+  if tipo == 'Valor Fecha Cobro' and fecha_inicial <= fecha_cobro:
+    return 'actualizacion'
+  if tipo == 'Valor Fecha Cobro' and fecha_inicial > fecha_cobro:
+    return 'actualizacion'
+  if tipo == 'Valor a Pagar Recursos Propios' and fecha_inicial <= fecha_cobro:
+    return 'actualizacion'
+  if tipo == 'Valor a Pagar Recursos Propios' and fecha_inicial > fecha_cobro:
+    return 'actualizacion_capitalizacion'
   else:
     return None
 
@@ -338,9 +346,16 @@ def input_transformacion(dataFrame):
     except:
         user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Valor a Pagar']['fecha'].values[0]
 
+    try:
+        user_input['fecha_cobro'] = user_input[user_input['tipo'] == 'Valor Fecha Cobro']['fecha'].values[0]
+    except:
+        user_input['fecha_cobro'] = user_input[user_input['tipo'] == 'Valor a Pagar']['fecha'].values[0]
+        
+        # Se deja temporalmente 'Valor a pagar' mientras se determina el funcionamiento correcto.    
+
     user_input['valor_inicial'] = user_input[user_input['tipo'] == 'Valor Fecha Corte']['valor'].values[0]
 
-    user_input['accion'] = user_input.apply(lambda x: determinador_accion(x['tipo'], x['fecha_inicial'], x['fecha_pension']), axis=1)
+    user_input['accion'] = user_input.apply(lambda x: determinador_accion(x['tipo'], x['fecha_inicial'], x['fecha_pension'], x['fecha_']), axis=1)
 
     nuevo_valor = []
     valor_referencia = 0
@@ -437,8 +452,41 @@ def input_transformacion(dataFrame):
         valo_menos_abono = valor_referencia + valor
         valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
 
+      #### VALOR A FECHA DE COBRO ####
+      #### ACT ####
+      if accion == 'actualizacion' and tipo == 'Valor Fecha Cobro':
+        valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final)
 
-      nuevo_valor.append(valor_referencia)
+      #### PAGO CON RECURSOS PROPIOS ####
+      #### ACT / CAP ####
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Cobro':
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Reintegro':
+        valor_mas_reintegro = valor_referencia + valor_anterior
+        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, trr)
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Abono':
+        valo_menos_abono = valor_referencia - valor_anterior
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Riesgo':
+        valo_menos_abono = valor_referencia + valor
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Corte':
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+      #### ACT ####
+      if accion == 'actualizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Cobro':
+        valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final)
+      if accion == 'actualizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Reintegro':
+        valor_mas_reintegro = valor_referencia + valor_anterior
+        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final)
+      if accion == 'actualizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Abono':
+        valo_menos_abono = valor_referencia - valor_anterior
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+      if accion == 'actualizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Riesgo':
+        valo_menos_abono = valor_referencia + valor
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+
+
+    nuevo_valor.append(valor_referencia)
 
     user_input['nuevo_valor'] = nuevo_valor
     user_input = user_input[['fecha', 'tipo', 'valor', 'accion', 'nuevo_valor', 'descripcion']]
