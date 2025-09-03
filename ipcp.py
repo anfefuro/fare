@@ -353,7 +353,7 @@ def input_transformacion(dataFrame):
 
     user_input['valor_inicial'] = user_input[user_input['tipo'] == 'Valor Fecha Corte']['valor'].values[0]
 
-    user_input['accion'] = user_input.apply(lambda x: determinador_accion(x['tipo'], x['fecha_inicial'], x['fecha_pension'], x['fecha_']), axis=1)
+    user_input['accion'] = user_input.apply(lambda x: determinador_accion(x['tipo'], x['fecha_inicial'], x['fecha_pension'], x['fecha_cobro']), axis=1)
 
     nuevo_valor = []
     valor_referencia = 0
