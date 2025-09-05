@@ -35,7 +35,7 @@ ipcp_base = pd.read_csv(f'{file_dir}IPCP.csv')
 
 ipcp_base = base_transformacion(ipcp_base)
 
-def actualizacion(valor_actualizar, fecha_inicial, fecha_final):
+def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fecha_ipcp):
 
   # Valores usuario
   valor_actualizar = float(valor_actualizar)
@@ -48,16 +48,22 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final):
   fecha_final_mes = fecha_final.to_period('M').to_timestamp()
   # fecha_ipc_actualizar_mes = fecha_ipc_actualizar.to_period('M').to_timestamp()
 
+  if fecha_check:
+    fecha_ipcp = pd.to_datetime(fecha_ipcp)
+    fecha_ipcp_mes = fecha_ipcp.to_period('M').to_timestamp()
+  else:
+    fecha_ipcp_mes = fecha_final_mes
+
   # Definición de variables
   # Valor a actualizar (En este ejemplo son $100.000)
   b1 = valor_actualizar
 
   # IPCP del mes anterior a la Fecha Final (En este ejemplo es el IPCP de diciembre de 2023)
-  fecha_final_menos_un_mes = fecha_final_mes - pd.DateOffset(months=1)
+  fecha_final_menos_un_mes = fecha_ipcp_mes - pd.DateOffset(months=1)
   IPCPf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Final (En este caso el IPCP de enero de 2024)
-  IPCPaltf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['ipcp'].values[0]
+  IPCPaltf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Final (En este caso son 31 dias (Enero 2024), en la formula se obtiene de la Hoja DiasMes)
   inicio_mes_final = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['fecha_inicio'].values[0]
@@ -101,7 +107,7 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final):
 
   return valor_actualizado
 
-def capitalizacion(valor_capitalizar, TRR, fecha_inicial, fecha_final):
+def capitalizacion(valor_capitalizar, TRR, fecha_inicial, fecha_final, fecha_check, fecha_ipcp):
 
   # Valores Usuario
   valor_capitalizar = float(valor_capitalizar)
@@ -135,7 +141,7 @@ def capitalizacion(valor_capitalizar, TRR, fecha_inicial, fecha_final):
 
   return valor_capitalizado
 
-def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, fecha_final, TRR):
+def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, TRR):
 
   # Valores usuario
   valor_actualizar_capitalizar = float(valor_actualizar_capitalizar)
@@ -146,15 +152,21 @@ def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, 
   fecha_inicial_mes = fecha_inicial.to_period('M').to_timestamp()
   fecha_final_mes = fecha_final.to_period('M').to_timestamp()
 
+  if fecha_check:
+    fecha_ipcp = pd.to_datetime(fecha_ipcp)
+    fecha_ipcp_mes = fecha_ipcp.to_period('M').to_timestamp()
+  else:
+    fecha_ipcp_mes = fecha_final_mes
+
   # Valor a Actualizar (En este ejemplo son $4.000.000)
   B1 = valor_actualizar_capitalizar
 
   # IPCP del mes anterior a la Fecha Final (En este ejemplo es el IPCP de mayo de 2024)
-  fecha_final_menos_un_mes = fecha_final_mes - pd.DateOffset(months=1)
+  fecha_final_menos_un_mes = fecha_ipcp_mes - pd.DateOffset(months=1)
   IPCP_yf_mf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Final (En este caso el IPCP de junio de 2024)
-  IPCPsig_yf_mf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['ipcp'].values[0]
+  IPCPsig_yf_mf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Final ("En este caso son 30 dias (junio 2024), en la formula se obtiene de la Hoja DiasMes")
   inicio_mes_final = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['fecha_inicio'].values[0]
@@ -213,7 +225,7 @@ def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, 
 
   return valor_actualizado_capitalizado
 
-def actualizacion_y_capitalizacion_inversa(valor_actualizar_capitalizar, fecha_inicial, fecha_final, TRR):
+def actualizacion_y_capitalizacion_inversa(valor_actualizar_capitalizar, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, TRR):
 
   # Valores usuario
   valor_actualizar_capitalizar = float(valor_actualizar_capitalizar)
@@ -224,15 +236,21 @@ def actualizacion_y_capitalizacion_inversa(valor_actualizar_capitalizar, fecha_i
   fecha_inicial_mes = fecha_inicial.to_period('M').to_timestamp()
   fecha_final_mes = fecha_final.to_period('M').to_timestamp()
 
+  if fecha_check:
+    fecha_ipcp = pd.to_datetime(fecha_ipcp)
+    fecha_ipcp_mes = fecha_ipcp.to_period('M').to_timestamp()
+  else:
+    fecha_ipcp_mes = fecha_final_mes
+
   # Valor a Actualizar (En este ejemplo son $4.000.000)
   B1 = valor_actualizar_capitalizar
 
   # IPCP del mes anterior a la Fecha Final (En este ejemplo es el IPCP de mayo de 2024)
-  fecha_final_menos_un_mes = fecha_final_mes - pd.DateOffset(months=1)
+  fecha_final_menos_un_mes = fecha_ipcp_mes - pd.DateOffset(months=1)
   IPCP_yf_mf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Final (En este caso el IPCP de junio de 2024)
-  IPCPsig_yf_mf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['ipcp'].values[0]
+  IPCPsig_yf_mf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Final ("En este caso son 30 dias (junio 2024), en la formula se obtiene de la Hoja DiasMes")
   inicio_mes_final = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['fecha_inicio'].values[0]
@@ -321,15 +339,14 @@ def input_transformacion(dataFrame):
     user_input = dataFrame.copy()
 
      # Transoformar la fecha de referencia como datetime año/mes/dia
-    fecha_final = ipcp_base['fecha_final'].max().date()
     fecha_inicio = ipcp_base['fecha_inicio'].min().date()
-
-    if user_input['fecha'].max() > fecha_final:
-        user_input['fecha'] = fecha_final
+    fecha_final = ipcp_base['fecha_final'].max().date()
 
     # Si la fecha que ingresa el usuario es mas antigua que la primera fecha de la base, se toma la primera fecha de la base
     if user_input['fecha'].min() < fecha_inicio:
         user_input['fecha'] = fecha_inicio
+    if user_input['fecha'].max() > fecha_final:
+        user_input['fecha'] = fecha_final
 
     # Se genera la columna fecha final y valor anterior
     user_input = user_input.sort_values('fecha').reset_index(drop=True)
@@ -338,6 +355,9 @@ def input_transformacion(dataFrame):
     user_input['valor_anterior'] = user_input['valor'].shift(1)
     user_input['valor_anterior'] = user_input['valor_anterior'].fillna(0)
     user_input['tipo_anterior'] = user_input['tipo'].shift(1)
+
+    user_input['fecha_check'] = user_input['fecha_check']
+    user_input['fecha_ipcp'] = user_input['fecha_ipcp']
 
     try:
         user_input['fecha_pension'] = user_input[user_input['tipo'] == 'Valor Fecha Riesgo']['fecha'].values[0]
@@ -349,10 +369,6 @@ def input_transformacion(dataFrame):
     except:
         user_input['fecha_cobro'] = user_input[user_input['tipo'] == 'Valor a Pagar']['fecha'].values[0]
         
-        # Se deja temporalmente 'Valor a pagar' mientras se determina el funcionamiento correcto.    
-
-    user_input['valor_inicial'] = user_input[user_input['tipo'] == 'Valor Fecha Corte']['valor'].values[0]
-
     user_input['accion'] = user_input.apply(lambda x: determinador_accion(x['tipo'], x['fecha_inicial'], x['fecha_pension'], x['fecha_cobro']), axis=1)
 
     nuevo_valor = []
@@ -363,184 +379,184 @@ def input_transformacion(dataFrame):
       valor = round(user_input['valor'][i], 2)
       fecha_inicial = user_input['fecha_inicial'][i]
       fecha_final = user_input['fecha'][i]
-      fecha_pension = user_input['fecha_pension'][i]
       trr = user_input['trr'][i]
       tipo = user_input['tipo'][i]
       accion = user_input['accion'][i]
       valor_anterior = user_input['valor_anterior'][i]
-      valor_inicial = user_input['valor_inicial'][i]
       tipo_anterior = user_input['tipo_anterior'][i]
+      fecha_check = user_input['fecha_check'][i]
+      fecha_ipcp = user_input['fecha_ipcp'][i]
 
 
       if accion == None:
         valor_referencia = valor
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor Fecha Riesgo':
-        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
 
       #### ABONO #####
       #### ACT / CAP ####
       if accion == 'actualizacion_capitalizacion' and tipo == 'Abono' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Abono' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Abono' and tipo_anterior == 'Valor Fecha Riesgo':
-        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Abono' and tipo_anterior == 'Valor Fecha Corte':
         valo_menos_abono = valor_referencia - valor
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Abono' and tipo_anterior == 'Valor Fecha Cobro':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Abono' and tipo_anterior == 'Valor a Pagar Recursos Propios':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       #### ACT ####
       if accion == 'actualizacion' and tipo == 'Abono' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Abono' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Abono' and tipo_anterior == 'Valor Fecha Riesgo':
-        valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Abono' and tipo_anterior == 'Valor Fecha Cobro':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Abono' and tipo_anterior == 'Valor a Pagar Recursos Propios':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
 
 
       #### REINTEGRO ####
       #### ACT / CAP ####
       if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Valor Fecha Riesgo':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Valor Fecha Corte':
         pass
       if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Valor Fecha Cobro':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Reintegro' and tipo_anterior == 'Valor a Pagar Recursos Propios':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
         ########### ROMPER GENERAR ALERTA #############
       #### ACT ####
       if accion == 'actualizacion' and tipo == 'Reintegro' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Reintegro' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Reintegro' and tipo_anterior == 'Valor Fecha Riesgo':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Reintegro' and tipo_anterior == 'Valor Fecha Cobro':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Reintegro' and tipo_anterior == 'Valor a Pagar Recursos Propios':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
 
       #### PAGO ####
       #### ACT / CAP ####
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Valor Fecha Riesgo':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Valor Fecha Corte':
-        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Valor Fecha Cobro':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Valor a Pagar Recursos Propios':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       #### ACT ####
       if accion == 'actualizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Valor Fecha Riesgo':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Valor Fecha Cobro':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor a Pagar' and tipo_anterior == 'Valor a Pagar Recursos Propios':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
 
       #### VALOR A FECHA DE COBRO ####
       #### ACT / CAP ####
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Valor Fecha Riesgo':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Valor Fecha Corte':
-        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Valor a Pagar Recursos Propios':
-        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       #### ACT ####
       if accion == 'actualizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Valor Fecha Riesgo':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Valor a Pagar Recursos Propios':
-        valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
 
       #### PAGO CON RECURSOS PROPIOS ####
       #### ACT / CAP ####
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Cobro':
-        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_mas_reintegro, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Riesgo':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Corte':
-        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, trr)
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       #### ACT ####
       if accion == 'actualizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Cobro':
-        valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Reintegro':
         valor_mas_reintegro = valor_referencia + valor_anterior
-        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valor_mas_reintegro, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Abono':
         valo_menos_abono = valor_referencia - valor_anterior
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Riesgo':
         valo_menos_abono = valor_referencia + valor
-        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final)
+        valor_referencia = actualizacion(valo_menos_abono, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
 
       nuevo_valor.append(valor_referencia)
 
