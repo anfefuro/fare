@@ -70,6 +70,8 @@ if st.button("📋 Mostrar datos ingresados"):
         datos.append({
             "valor": st.session_state[f"valor_{i}"],
             "fecha": st.session_state[f"fecha_{i}"],
+            "fecha_check": st.session_state[f"fecha_check_{i}"],
+            "fecha_ipcp": st.session_state[f"fecha_ipcp_{i}"] if st.session_state[f"fecha_check_{i}"] else pd.Timestamp('1950-01-01'),
             "tipo": st.session_state[f"tipo_{i}"],
             "trr": st.session_state[f"trr_{i}"],
             "descripcion": st.session_state[f"descripcion_{i}"]
