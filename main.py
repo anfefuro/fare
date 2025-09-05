@@ -43,7 +43,7 @@ for idx, i in enumerate(st.session_state.indices_eventos):
     st.number_input(f"Valor {idx+1}", key=f"valor_{i}", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
     st.date_input(f"Fecha {idx+1}", key=f"fecha_{i}", min_value=pd.Timestamp('1950-01-01'))
     # Agregar un checkbox para habilitar fecha IPCP
-    fecha_ipcp = st.checkbox("📅 Fecha IPCP", key=f"fecha_ipcp_{i}")
+    fecha_ipcp = st.checkbox("📅 Fecha IPCP", key=f"fecha_check_{i}")
     
     # Si la fecha IPCP está habilitada, agregar un input para la fecha IPCP
     if fecha_ipcp:
