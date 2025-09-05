@@ -122,6 +122,12 @@ with st.container():
     # Este valor es un entero, sin embargo el usuario puede verlo en formato moneda con dos decimales
     st.number_input(f"Valor", key=f"valor", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
     st.date_input(f"Fecha Inicial", key=f"fecha_inicial", min_value=pd.Timestamp('1950-01-01'))
+    # Agregar un checkbox para habilitar fecha IPCP
+    fecha_ipcp = st.checkbox("📅 Fecha IPCP", key=f"fecha_check")
+    
+    # Si la fecha IPCP está habilitada, agregar un input para la fecha IPCP
+    if fecha_ipcp:
+        st.date_input(f"Fecha IPCP", key=f"fecha_ipcp", min_value=pd.Timestamp('1950-01-01'))
     st.date_input(f"Fecha Final", key=f"fecha_final", min_value=pd.Timestamp('1950-01-01'))
 
 # Botón para mostrar resultados de actualización
@@ -129,10 +135,12 @@ if st.button("📋 Mostrar resultados de actualización"):
     # Obtener los valores de entrada
     valor = st.session_state["valor"]
     fecha_inicial = st.session_state["fecha_inicial"]
+    fecha_check = st.session_state["fecha_check"]
+    fecha_ipcp = st.session_state["fecha_ipcp"] if fecha_check else pd.Timestamp('1950-01-01')
     fecha_final = st.session_state["fecha_final"]
 
     # Llamar a la función de actualización
-    actualizacion = actualizacion(valor, fecha_inicial, fecha_final)
+    actualizacion = actualizacion(valor, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
 
     # Mostrar el resultado de la actualización con un formato de texto grande y como moneda
     st.write(f"El valor actualizado es: **{actualizacion:,.2f}**")
