@@ -74,11 +74,11 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
   df = int((fecha_final - inicio_mes_final) / np.timedelta64(1, 'D')) + 1
 
   # IPCP del mes anterior a la Inicial (En este ejemplo es el IPCP de marzo de 1995)
-  fecha_inicial_menos_un_mes = fecha_ipcp_mes - pd.DateOffset(months=1)
+  fecha_inicial_menos_un_mes = fecha_inicial_mes - pd.DateOffset(months=1)
   IPCPi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Inicial (En este caso el IPCP de abril de 1995)
-  IPCPalti = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipcp'].values[0]
+  IPCPalti = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Inicial (En este caso son 30 dias (Abril 1995), en la formula se obtiene de la Hoja DiasMes)
   inicio_mes_inicial = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['fecha_inicio'].values[0]
@@ -177,11 +177,11 @@ def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, 
   df = int((fecha_final - inicio_mes_final) / np.timedelta64(1, 'D')) + 1
 
   # IPCP del mes anterior a la Inicial (En este ejemplo es el IPCP de marzo de 1995)
-  fecha_inicial_menos_un_mes = fecha_ipcp_mes - pd.DateOffset(months=1)
+  fecha_inicial_menos_un_mes = fecha_inicial_mes - pd.DateOffset(months=1)
   IPCP_yi_mi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Inicial (En este caso el IPCP de abril de 1995)
-  IPCPsig_yi_mi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipcp'].values[0]
+  IPCPsig_yi_mi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Inicial ("En este caso son 30 dias (Abril 1995), en la formula se obtiene de la Hoja DiasMes")
   inicio_mes_inicial = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['fecha_inicio'].values[0]
@@ -261,11 +261,11 @@ def actualizacion_y_capitalizacion_inversa(valor_actualizar_capitalizar, fecha_i
   df = int((fecha_final - inicio_mes_final) / np.timedelta64(1, 'D')) + 1
 
   # IPCP del mes anterior a la Inicial (En este ejemplo es el IPCP de marzo de 1995)
-  fecha_inicial_menos_un_mes = fecha_ipcp_mes - pd.DateOffset(months=1)
+  fecha_inicial_menos_un_mes = fecha_inicial_mes - pd.DateOffset(months=1)
   IPCP_yi_mi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Inicial (En este caso el IPCP de abril de 1995)
-  IPCPsig_yi_mi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipcp'].values[0]
+  IPCPsig_yi_mi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Inicial ("En este caso son 30 dias (Abril 1995), en la formula se obtiene de la Hoja DiasMes")
   inicio_mes_inicial = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['fecha_inicio'].values[0]
