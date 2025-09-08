@@ -52,7 +52,7 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
     fecha_ipcp = pd.to_datetime(fecha_ipcp)
     fecha_ipcp_mes = fecha_ipcp.to_period('M').to_timestamp()
   else:
-    fecha_ipcp_mes = fecha_inicial_mes
+    fecha_ipcp_mes = fecha_final_mes
 
   # Definición de variables
   # Valor a actualizar (En este ejemplo son $100.000)
