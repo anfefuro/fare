@@ -27,6 +27,19 @@ def base_transformacion(dataFrame):
     ipcp_base['ipcp.1'] = ipcp_base['ipcp.1'].str.replace(',', '.').astype(float)
     ipcp_base['ipcp-1'] = ipcp_base['ipcp-1'].str.replace(',', '.').astype(float)
 
+    # Calculo de IPCP 12 meses
+    ipcp_base['ipc'] = pd.to_numeric(ipcp_base['ipc'].str.replace(',', '.'), errors='coerce')
+    ipcp_base['ipc_calc'] = 1 + (ipcp_base['ipc'] / 100)
+
+    ipcp_12m_values = []
+    ipcp_values = ipcp_base['ipc_calc'].values
+
+    for i in range(len(ipcp_values)):
+      value = math.prod(ipcp_values[i:i+12])
+      ipcp_12m_values.append(value)
+
+    ipcp_base['ipc_calc'] = ipcp_12m_values
+
     return ipcp_base
 
 file_dir = f'{os.getcwd()}/'
@@ -88,6 +101,8 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
   # Son los dias del mes inicial posterior al primer dia (En este caso, al ser 28 de abril; se calculan esos 28 dias adicionales de IPCP)
   di = int((fecha_inicial - inicio_mes_inicial) / np.timedelta64(1, 'D')) + 1
 
+  VIPCm = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipc_calc'].values[0]
+
   # print(
   #     f'IPCPf: {IPCPf}\n',
   #     f'IPCPaltf: {IPCPaltf}\n',
@@ -99,13 +114,25 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
   #     f'di: {di}'
   # )
 
-  num = IPCPf + (((IPCPaltf - IPCPf) / Dmf) * df)
-  den = IPCPi + (((IPCPalti - IPCPi) / Dmi) * di)
+  if fecha_check:
+    
+    IPCPaltf = IPCPf * (((1 + (VIPCm / 100)) * (1 / 12)) - 1)
 
-  valor_actualizado = b1 * (num / den)
-  valor_actualizado = round(valor_actualizado, 2)
+    num = IPCPf + (((IPCPaltf - IPCPf) / Dmf) * df)
+    den = IPCPi + (((IPCPalti - IPCPi) / Dmi) * di)
 
-  return valor_actualizado
+    valor_actualizado = b1 * (num / den)
+    valor_actualizado = round(valor_actualizado, 2)
+
+    return valor_actualizado
+  else:
+    num = IPCPf + (((IPCPaltf - IPCPf) / Dmf) * df)
+    den = IPCPi + (((IPCPalti - IPCPi) / Dmi) * di)
+
+    valor_actualizado = b1 * (num / den)
+    valor_actualizado = round(valor_actualizado, 2)
+
+    return valor_actualizado
 
 def capitalizacion(valor_capitalizar, TRR, fecha_inicial, fecha_final, fecha_check, fecha_ipcp):
 
