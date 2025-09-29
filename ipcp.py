@@ -72,11 +72,11 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
   b1 = valor_actualizar
 
   # IPCP del mes anterior a la Fecha Final (En este ejemplo es el IPCP de diciembre de 2023)
-  fecha_final_menos_un_mes = fecha_ipcp_mes - pd.DateOffset(months=1)
+  fecha_final_menos_un_mes = fecha_final_mes - pd.DateOffset(months=1)
   IPCPf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Final (En este caso el IPCP de enero de 2024)
-  IPCPaltf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipcp'].values[0]
+  IPCPaltf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Final (En este caso son 31 dias (Enero 2024), en la formula se obtiene de la Hoja DiasMes)
   inicio_mes_final = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['fecha_inicio'].values[0]
