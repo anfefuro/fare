@@ -117,7 +117,7 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
 
   if fecha_check:
     
-    IPCPaltf = IPCPf * (((1 + (VIPCm / 100)) * (1 / 12)) - 1)
+    IPCPaltf = IPCPf * (1 + ((((VIPCm ** (1 / 12)) -1) * 100) / 100))
 
     num = IPCPf + (((IPCPaltf - IPCPf) / Dmf) * df)
     den = IPCPi + (((IPCPalti - IPCPi) / Dmi) * di)
