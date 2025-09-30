@@ -117,24 +117,15 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
   # )
 
   if fecha_check:
-
     IPCPaltf = IPCPf * (1 + ((((VIPCm ** (1 / 12)) -1) * 100) / 100))
 
-    num = IPCPf + (((IPCPaltf - IPCPf) / Dmf) * df)
-    den = IPCPi + (((IPCPalti - IPCPi) / Dmi) * di)
+  num = IPCPf + (((IPCPaltf - IPCPf) / Dmf) * df)
+  den = IPCPi + (((IPCPalti - IPCPi) / Dmi) * di)
 
-    valor_actualizado = b1 * (num / den)
-    valor_actualizado = round(valor_actualizado, 2)
+  valor_actualizado = b1 * (num / den)
+  valor_actualizado = round(valor_actualizado, 2)
 
-    return valor_actualizado
-  else:
-    num = IPCPf + (((IPCPaltf - IPCPf) / Dmf) * df)
-    den = IPCPi + (((IPCPalti - IPCPi) / Dmi) * di)
-
-    valor_actualizado = b1 * (num / den)
-    valor_actualizado = round(valor_actualizado, 2)
-
-    return valor_actualizado
+  return valor_actualizado
 
 def capitalizacion(valor_capitalizar, TRR, fecha_inicial, fecha_final, fecha_check, fecha_ipcp):
 
@@ -185,17 +176,17 @@ def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, 
     fecha_ipcp = pd.to_datetime(fecha_ipcp)
     fecha_ipcp_mes = fecha_ipcp.to_period('M').to_timestamp()
   else:
-    fecha_ipcp_mes = fecha_inicial_mes
+    fecha_ipcp_mes = fecha_final_mes
 
   # Valor a Actualizar (En este ejemplo son $4.000.000)
   B1 = valor_actualizar_capitalizar
 
   # IPCP del mes anterior a la Fecha Final (En este ejemplo es el IPCP de mayo de 2024)
   fecha_final_menos_un_mes = fecha_final_mes - pd.DateOffset(months=1)
-  IPCP_yf_mf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_menos_un_mes]['ipcp'].values[0]
+  IPCPf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Final (En este caso el IPCP de junio de 2024)
-  IPCPsig_yf_mf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['ipcp'].values[0]
+  IPCPaltf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Final ("En este caso son 30 dias (junio 2024), en la formula se obtiene de la Hoja DiasMes")
   inicio_mes_final = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['fecha_inicio'].values[0]
@@ -207,10 +198,10 @@ def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, 
 
   # IPCP del mes anterior a la Inicial (En este ejemplo es el IPCP de marzo de 1995)
   fecha_inicial_menos_un_mes = fecha_inicial_mes - pd.DateOffset(months=1)
-  IPCP_yi_mi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_menos_un_mes]['ipcp'].values[0]
+  IPCPi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Inicial (En este caso el IPCP de abril de 1995)
-  IPCPsig_yi_mi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['ipcp'].values[0]
+  IPCPalti = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Inicial ("En este caso son 30 dias (Abril 1995), en la formula se obtiene de la Hoja DiasMes")
   inicio_mes_inicial = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['fecha_inicio'].values[0]
@@ -219,6 +210,8 @@ def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, 
 
   # Son los dias del mes Fecha Inicial posterior al primer dia ("En este caso, al ser 28 de abril; se calculan esos 28 dias adicionales de IPCP")
   di = int((fecha_inicial - inicio_mes_inicial) / np.timedelta64(1, 'D')) + 1
+
+  VIPCm = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipc_calc'].values[0]
 
   # Tasa de Rendimiento (Puede ser 3% o 4%) (Se expresa como entero pues en la formula se convierte en porcentaje al dividir en 100)
   B4 = TRR
@@ -231,12 +224,12 @@ def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, 
 
   # print(
   #     f'B1: {B1}\n',
-  #     f'IPCP_yf_mf: {IPCP_yf_mf}\n',
-  #     f'IPCPsig_yf_mf: {IPCPsig_yf_mf}\n',
+  #     f'IPCPf: {IPCPf}\n',
+  #     f'IPCPaltf: {IPCPaltf}\n',
   #     f'Dmf: {Dmf}\n',
   #     f'df: {df}\n',
-  #     f'IPCP_yi_mi: {IPCP_yi_mi}\n',
-  #     f'IPCPsig_yi_mi: {IPCPsig_yi_mi}\n',
+  #     f'IPCPi: {IPCPi}\n',
+  #     f'IPCPalti: {IPCPalti}\n',
   #     f'Dmi: {Dmi}\n',
   #     f'di: {di}\n',
   #     f'B4: {B4}\n',
@@ -245,8 +238,11 @@ def actualizacion_y_capitalizacion(valor_actualizar_capitalizar, fecha_inicial, 
   #     f'exp: {exp}'
   # )
 
-  num = IPCP_yf_mf + (((IPCPsig_yf_mf - IPCP_yf_mf) / Dmf) * df)
-  dem = IPCP_yi_mi + (((IPCPsig_yi_mi - IPCP_yi_mi) / Dmi) * di)
+  if fecha_check:
+    IPCPaltf = IPCPf * (1 + ((((VIPCm ** (1 / 12)) -1) * 100) / 100))
+
+  num = IPCPf + (((IPCPaltf - IPCPf) / Dmf) * df)
+  dem = IPCPi + (((IPCPalti - IPCPi) / Dmi) * di)
   mulp = (1 + (B4 / 100)) ** (exp / 365.25)
 
   valor_actualizado_capitalizado = (B1 * (num / dem)) * mulp
@@ -276,10 +272,10 @@ def actualizacion_y_capitalizacion_inversa(valor_actualizar_capitalizar, fecha_i
 
   # IPCP del mes anterior a la Fecha Final (En este ejemplo es el IPCP de mayo de 2024)
   fecha_final_menos_un_mes = fecha_final_mes - pd.DateOffset(months=1)
-  IPCP_yf_mf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_menos_un_mes]['ipcp'].values[0]
+  IPCPf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Final (En este caso el IPCP de junio de 2024)
-  IPCPsig_yf_mf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['ipcp'].values[0]
+  IPCPaltf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Final ("En este caso son 30 dias (junio 2024), en la formula se obtiene de la Hoja DiasMes")
   inicio_mes_final = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['fecha_inicio'].values[0]
@@ -291,10 +287,10 @@ def actualizacion_y_capitalizacion_inversa(valor_actualizar_capitalizar, fecha_i
 
   # IPCP del mes anterior a la Inicial (En este ejemplo es el IPCP de marzo de 1995)
   fecha_inicial_menos_un_mes = fecha_inicial_mes - pd.DateOffset(months=1)
-  IPCP_yi_mi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_menos_un_mes]['ipcp'].values[0]
+  IPCPi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Inicial (En este caso el IPCP de abril de 1995)
-  IPCPsig_yi_mi = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['ipcp'].values[0]
+  IPCPalti = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Inicial ("En este caso son 30 dias (Abril 1995), en la formula se obtiene de la Hoja DiasMes")
   inicio_mes_inicial = ipcp_base[ipcp_base['fecha_inicio'] == fecha_inicial_mes]['fecha_inicio'].values[0]
@@ -303,6 +299,8 @@ def actualizacion_y_capitalizacion_inversa(valor_actualizar_capitalizar, fecha_i
 
   # Son los dias del mes Fecha Inicial posterior al primer dia ("En este caso, al ser 28 de abril; se calculan esos 28 dias adicionales de IPCP")
   di = int((fecha_inicial - inicio_mes_inicial) / np.timedelta64(1, 'D')) + 1
+
+  VIPCm = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipc_calc'].values[0]
 
   # Tasa de Rendimiento (Puede ser 3% o 4%) (Se expresa como entero pues en la formula se convierte en porcentaje al dividir en 100)
   B4 = TRR
@@ -315,12 +313,12 @@ def actualizacion_y_capitalizacion_inversa(valor_actualizar_capitalizar, fecha_i
 
   # print(
   #     f'B1: {B1}\n',
-  #     f'IPCP_yf_mf: {IPCP_yf_mf}\n',
-  #     f'IPCPsig_yf_mf: {IPCPsig_yf_mf}\n',
+  #     f'IPCPf: {IPCPf}\n',
+  #     f'IPCPaltf: {IPCPaltf}\n',
   #     f'Dmf: {Dmf}\n',
   #     f'df: {df}\n',
-  #     f'IPCP_yi_mi: {IPCP_yi_mi}\n',
-  #     f'IPCPsig_yi_mi: {IPCPsig_yi_mi}\n',
+  #     f'IPCPi: {IPCPi}\n',
+  #     f'IPCPalti: {IPCPalti}\n',
   #     f'Dmi: {Dmi}\n',
   #     f'di: {di}\n',
   #     f'B4: {B4}\n',
@@ -329,8 +327,11 @@ def actualizacion_y_capitalizacion_inversa(valor_actualizar_capitalizar, fecha_i
   #     f'exp: {exp}'
   # )
 
-  num = IPCP_yi_mi + (((IPCPsig_yi_mi - IPCP_yi_mi) / Dmi) * di)
-  dem = IPCP_yf_mf + (((IPCPsig_yf_mf - IPCP_yf_mf) / Dmf) * df)
+  if fecha_check:
+    IPCPalti = IPCPi * (1 + ((((VIPCm ** (1 / 12)) -1) * 100) / 100))
+
+  num = IPCPi + (((IPCPalti - IPCPi) / Dmi) * di)
+  dem = IPCPf + (((IPCPaltf - IPCPf) / Dmf) * df)
   mulp = (1 + (B4 / 100)) ** ((exp / 365.25) * -1)
 
   valor_actualizado_capitalizado = (B1 * (num / dem)) * mulp
