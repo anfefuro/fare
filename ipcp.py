@@ -77,7 +77,7 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
   IPCPf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_menos_un_mes]['ipcp'].values[0]
 
   # IPCP del mes Fecha Final (En este caso el IPCP de enero de 2024)
-  IPCPaltf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['ipcp'].values[0]
+  IPCPaltf = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipcp'].values[0]
 
   # Es el # de dias Calendario que tiene el mes de Fecha Final (En este caso son 31 dias (Enero 2024), en la formula se obtiene de la Hoja DiasMes)
   inicio_mes_final = ipcp_base[ipcp_base['fecha_inicio'] == fecha_final_mes]['fecha_inicio'].values[0]
@@ -112,11 +112,12 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
   #     f'IPCPi: {IPCPi}\n',
   #     f'IPCPalti: {IPCPalti}\n',
   #     f'Dmi: {Dmi}\n',
-  #     f'di: {di}'
+  #     f'di: {di}\n',
+  #     f'VIPCm: {VIPCm}'
   # )
 
   if fecha_check:
-    
+
     IPCPaltf = IPCPf * (1 + ((((VIPCm ** (1 / 12)) -1) * 100) / 100))
 
     num = IPCPf + (((IPCPaltf - IPCPf) / Dmf) * df)
