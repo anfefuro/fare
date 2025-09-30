@@ -373,10 +373,9 @@ def input_transformacion(dataFrame):
     fecha_final = ipcp_base['fecha_final'].max().date()
 
     # Si la fecha que ingresa el usuario es mas antigua que la primera fecha de la base, se toma la primera fecha de la base
-    if user_input['fecha'].min() < fecha_inicio:
-        user_input['fecha'] = fecha_inicio
-    if user_input['fecha'].max() > fecha_final:
-        user_input['fecha'] = fecha_final
+    user_input.loc[user_input['fecha'] < fecha_inicio, 'fecha'] = fecha_inicio
+    # Si la fecha que ingresa el usuario es mas reciente que la ultima fecha de la base, se toma la ultima fecha de la base
+    user_input.loc[user_input['fecha'] > fecha_final, 'fecha'] = fecha_final
 
     # Se genera la columna fecha final y valor anterior
     user_input = user_input.sort_values('fecha').reset_index(drop=True)
