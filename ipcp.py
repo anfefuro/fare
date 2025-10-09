@@ -376,6 +376,8 @@ def input_transformacion(dataFrame):
     user_input.loc[user_input['fecha'] < fecha_inicio, 'fecha'] = fecha_inicio
     # Si la fecha que ingresa el usuario es mas reciente que la ultima fecha de la base, se toma la ultima fecha de la base
     user_input.loc[user_input['fecha'] > fecha_final, 'fecha'] = fecha_final
+    # Si la fecha de IPCP alterna, se toma la fecha de IPCP anterior
+    user_input.loc[user_input['fecha_ipcp'] > fecha_final, 'fecha_ipcp'] = fecha_final
 
     # Se genera la columna fecha final y valor anterior
     user_input = user_input.sort_values('fecha').reset_index(drop=True)
