@@ -52,8 +52,8 @@ ipcp_base = base_transformacion(ipcp_base)
 def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fecha_ipcp):
 
   # Validaciones reduntantes respecto a la funcion principal, pero utilies en un llamado particular de la funcion
-  fecha_inicio_min = ipcp_base['fecha_inicio'].min().date()
-  fecha_final_max = ipcp_base['fecha_final'].max().date()
+  fecha_inicio_min = pd.to_datetime(ipcp_base['fecha_inicio'].min())
+  fecha_final_max = pd.to_datetime(ipcp_base['fecha_final'].max())
 
   # Valores usuario
   valor_actualizar = float(valor_actualizar)
@@ -74,10 +74,10 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
     fecha_ipcp = pd.to_datetime(fecha_ipcp)
     fecha_ipcp_mes = fecha_ipcp.to_period('M').to_timestamp()
 
-    fecha_ipcp = fecha_inicio_min if fecha_ipcp < fecha_inicio_min else fecha_ipcp
-    fecha_ipcp = fecha_final_max if fecha_ipcp > fecha_final_max else fecha_ipcp
+    fecha_ipcp_mes = fecha_final_max.to_period('M').to_timestamp() if fecha_ipcp_mes > fecha_final_max else fecha_ipcp_mes
   else:
     fecha_ipcp_mes = fecha_final_mes
+  
 
   # Definición de variables
   # Valor a actualizar (En este ejemplo son $100.000)
@@ -115,17 +115,17 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
 
   VIPCm = ipcp_base[ipcp_base['fecha_inicio'] == fecha_ipcp_mes]['ipc_calc'].values[0]
 
-  # print(
-  #     f'IPCPf: {IPCPf}\n',
-  #     f'IPCPaltf: {IPCPaltf}\n',
-  #     f'Dmf: {Dmf}\n',
-  #     f'df: {df}\n',
-  #     f'IPCPi: {IPCPi}\n',
-  #     f'IPCPalti: {IPCPalti}\n',
-  #     f'Dmi: {Dmi}\n',
-  #     f'di: {di}\n',
-  #     f'VIPCm: {VIPCm}'
-  # )
+  print(
+      f'IPCPf: {IPCPf}\n',
+      f'IPCPaltf: {IPCPaltf}\n',
+      f'Dmf: {Dmf}\n',
+      f'df: {df}\n',
+      f'IPCPi: {IPCPi}\n',
+      f'IPCPalti: {IPCPalti}\n',
+      f'Dmi: {Dmi}\n',
+      f'di: {di}\n',
+      f'VIPCm: {VIPCm}'
+  )
 
   if fecha_check:
     IPCPaltf = IPCPf * (1 + ((((VIPCm ** (1 / 12)) -1) * 100) / 100))
