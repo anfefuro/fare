@@ -51,6 +51,16 @@ ipcp_base = base_transformacion(ipcp_base)
 
 def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fecha_ipcp):
 
+  # Validaciones reduntantes respecto a la funcion principal, pero utilies en un llamado particular de la funcion
+  fecha_inicio_min = ipcp_base['fecha_inicio'].min().date()
+  fecha_final_max = ipcp_base['fecha_final'].max().date()
+
+  fecha_inicial = fecha_inicio_min if fecha_inicial < fecha_inicio_min else fecha_inicial
+  fecha_final = fecha_final_max if fecha_final > fecha_final_max else fecha_final
+
+  fecha_ipcp = fecha_inicio_min if fecha_ipcp < fecha_inicio_min else fecha_ipcp
+  fecha_ipcp = fecha_final_max if fecha_ipcp > fecha_final_max else fecha_ipcp
+
   # Valores usuario
   valor_actualizar = float(valor_actualizar)
   # Variable instanciada como fecha
@@ -387,7 +397,7 @@ def input_transformacion(dataFrame):
 
     user_input['fecha_check'] = user_input['fecha_check']
     user_input['fecha_ipcp'] = user_input['fecha_ipcp']
-    
+
     # Si la fecha de IPCP es más antigua que la primera fecha de la base, se toma la primera fecha de la base
     user_input.loc[user_input['fecha_ipcp'] < fecha_inicio, 'fecha_ipcp'] = fecha_inicio
     # Si la fecha de IPCP es más reciente que la última fecha de la base, se toma la última fecha de la base
