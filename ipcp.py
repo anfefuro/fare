@@ -55,18 +55,16 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
   fecha_inicio_min = ipcp_base['fecha_inicio'].min().date()
   fecha_final_max = ipcp_base['fecha_final'].max().date()
 
-  fecha_inicial = fecha_inicio_min if fecha_inicial < fecha_inicio_min else fecha_inicial
-  fecha_final = fecha_final_max if fecha_final > fecha_final_max else fecha_final
-
-  fecha_ipcp = fecha_inicio_min if fecha_ipcp < fecha_inicio_min else fecha_ipcp
-  fecha_ipcp = fecha_final_max if fecha_ipcp > fecha_final_max else fecha_ipcp
-
   # Valores usuario
   valor_actualizar = float(valor_actualizar)
   # Variable instanciada como fecha
   fecha_inicial = pd.to_datetime(fecha_inicial) # '1995-04-28 00:00:00'
   fecha_final = pd.to_datetime(fecha_final) # '2024-01-30 00:00:00'
   # fecha_ipc_actualizar = pd.to_datetime('2023-12-31 00:00:00')
+
+  fecha_inicial = fecha_inicio_min if fecha_inicial < fecha_inicio_min else fecha_inicial
+  fecha_final = fecha_final_max if fecha_final > fecha_final_max else fecha_final
+
   # Valores de fecha truncados a mes
   fecha_inicial_mes = fecha_inicial.to_period('M').to_timestamp()
   fecha_final_mes = fecha_final.to_period('M').to_timestamp()
@@ -75,6 +73,9 @@ def actualizacion(valor_actualizar, fecha_inicial, fecha_final, fecha_check, fec
   if fecha_check:
     fecha_ipcp = pd.to_datetime(fecha_ipcp)
     fecha_ipcp_mes = fecha_ipcp.to_period('M').to_timestamp()
+
+    fecha_ipcp = fecha_inicio_min if fecha_ipcp < fecha_inicio_min else fecha_ipcp
+    fecha_ipcp = fecha_final_max if fecha_ipcp > fecha_final_max else fecha_ipcp
   else:
     fecha_ipcp_mes = fecha_final_mes
 
