@@ -41,13 +41,13 @@ for idx, i in enumerate(st.session_state.indices_eventos):
     
     # Este valor es un entero, sin embargo el usuario puede verlo en formato moneda con dos decimales
     st.number_input(f"Valor {idx+1}", key=f"valor_{i}", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
-    st.date_input(f"Fecha {idx+1}", key=f"fecha_{i}", min_value=pd.Timestamp('1954-08-31'))
+    st.date_input(f"Fecha {idx+1}", key=f"fecha_{i}", min_value=pd.Timestamp('1954-08-01').date())
     # Agregar un checkbox para habilitar fecha IPCP
     fecha_ipcp = st.checkbox("📅 Fecha IPCP", key=f"fecha_check_{i}")
     
     # Si la fecha IPCP está habilitada, agregar un input para la fecha IPCP
     if fecha_ipcp:
-        st.date_input(f"Fecha IPCP {idx+1}", key=f"fecha_ipcp_{i}", min_value=pd.Timestamp('1954-08-31'))
+        st.date_input(f"Fecha IPCP {idx+1}", key=f"fecha_ipcp_{i}", min_value=pd.Timestamp('1954-08-01').date())
     
     st.selectbox(f"Tipo {idx+1}", key=f"tipo_{i}", options=['Valor Fecha Corte', 'Valor Fecha Riesgo', 'Abono', 'Reintegro', 'Valor a Pagar', 'Valor Fecha Cobro', 'Valor a Pagar Recursos Propios'])
     # La TRR tendran un valor por defecto de 4
@@ -71,7 +71,7 @@ if st.button("📋 Mostrar datos ingresados"):
             "valor": st.session_state[f"valor_{i}"],
             "fecha": st.session_state[f"fecha_{i}"],
             "fecha_check": st.session_state[f"fecha_check_{i}"],
-            "fecha_ipcp": st.session_state[f"fecha_ipcp_{i}"] if st.session_state[f"fecha_check_{i}"] else pd.Timestamp('1954-08-31'),
+            "fecha_ipcp": st.session_state[f"fecha_ipcp_{i}"] if st.session_state[f"fecha_check_{i}"] else pd.Timestamp('1954-08-01').date(),
             "tipo": st.session_state[f"tipo_{i}"],
             "trr": st.session_state[f"trr_{i}"],
             "descripcion": st.session_state[f"descripcion_{i}"]
@@ -121,14 +121,14 @@ st.title("Calculadora de Actualización")
 with st.container():
     # Este valor es un entero, sin embargo el usuario puede verlo en formato moneda con dos decimales
     st.number_input(f"Valor", key=f"valor", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
-    st.date_input(f"Fecha Inicial", key=f"fecha_inicial", min_value=pd.Timestamp('1954-08-31'))
+    st.date_input(f"Fecha Inicial", key=f"fecha_inicial", min_value=pd.Timestamp('1954-08-01').date())
     # Agregar un checkbox para habilitar fecha IPCP
     fecha_ipcp = st.checkbox("📅 Fecha IPCP", key=f"fecha_check")
     
     # Si la fecha IPCP está habilitada, agregar un input para la fecha IPCP
     if fecha_ipcp:
-        st.date_input(f"Fecha IPCP", key=f"fecha_ipcp", min_value=pd.Timestamp('1954-08-31'))
-    st.date_input(f"Fecha Final", key=f"fecha_final", min_value=pd.Timestamp('1954-08-31'))
+        st.date_input(f"Fecha IPCP", key=f"fecha_ipcp", min_value=pd.Timestamp('1954-08-01').date())
+    st.date_input(f"Fecha Final", key=f"fecha_final", min_value=pd.Timestamp('1954-08-01').date())
 
 # Botón para mostrar resultados de actualización
 if st.button("📋 Mostrar resultados de actualización"):
@@ -136,7 +136,7 @@ if st.button("📋 Mostrar resultados de actualización"):
     valor = st.session_state["valor"]
     fecha_inicial = st.session_state["fecha_inicial"]
     fecha_check = st.session_state["fecha_check"]
-    fecha_ipcp = st.session_state["fecha_ipcp"] if fecha_check else pd.Timestamp('1954-08-31')
+    fecha_ipcp = st.session_state["fecha_ipcp"] if fecha_check else pd.Timestamp('1954-08-01').date()
     fecha_final = st.session_state["fecha_final"]
 
     # Llamar a la función de actualización
