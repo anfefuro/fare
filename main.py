@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import io
 
-from ipcp import input_transformacion, actualizacion
+from ipcp import input_transformacion, actualizacion, actualizacion_y_capitalizacion
 
 st.title("IPCP Calculadora")
 
@@ -144,3 +144,28 @@ if st.button("📋 Mostrar resultados de actualización"):
 
     # Mostrar el resultado de la actualización con un formato de texto grande y como moneda
     st.write(f"El valor actualizado es: **{actualizacion:,.2f}**")
+
+
+st.title("Calculadora de Actualización y Capitalización")
+
+with st.container():
+    st.number_input("Valor", key="valor_ayc", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
+    st.date_input("Fecha Inicial", key="fecha_inicial_ayc", min_value=pd.Timestamp('1954-08-01').date())
+    fecha_ipcp_ayc = st.checkbox("📅 Fecha IPCP", key="fecha_check_ayc")
+
+    if fecha_ipcp_ayc:
+        st.date_input("Fecha IPCP", key="fecha_ipcp_ayc", min_value=pd.Timestamp('1954-08-01').date())
+    st.date_input("Fecha Final", key="fecha_final_ayc", min_value=pd.Timestamp('1954-08-01').date())
+    st.number_input("TRR", key="trr_ayc", min_value=0, max_value=5, step=1, help="Ingrese el porcentaje de TRR, por ejemplo, 3 para 3%", value=4)
+
+if st.button("📋 Mostrar resultados de actualización y capitalización"):
+    valor_ayc = st.session_state["valor_ayc"]
+    fecha_inicial_ayc = st.session_state["fecha_inicial_ayc"]
+    fecha_check_ayc = st.session_state["fecha_check_ayc"]
+    fecha_ipcp_ayc = st.session_state["fecha_ipcp_ayc"] if fecha_check_ayc else pd.Timestamp('1954-08-01').date()
+    fecha_final_ayc = st.session_state["fecha_final_ayc"]
+    trr_ayc = st.session_state["trr_ayc"]
+
+    resultado_ayc = actualizacion_y_capitalizacion(valor_ayc, fecha_inicial_ayc, fecha_final_ayc, fecha_check_ayc, fecha_ipcp_ayc, trr_ayc)
+
+    st.write(f"El valor actualizado y capitalizado es: **{resultado_ayc:,.2f}**")
