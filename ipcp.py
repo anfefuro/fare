@@ -463,8 +463,8 @@ def input_transformacion(dataFrame):
       if accion == 'actualizacion' and tipo == 'Abono' and tipo_anterior == 'Valor Fecha Corte':
         valor_actualizado = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
         valor_referencia = valor_actualizado - valor
-      # if accion == 'actualizacion' and tipo == 'Abono' and tipo_anterior == 'Valor Fecha Cobro':
-        # valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp) - valor
+      if accion == 'actualizacion' and tipo == 'Abono' and tipo_anterior == 'Valor Fecha Cobro':
+        valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp) - valor
       if accion == 'actualizacion' and tipo == 'Abono' and tipo_anterior == 'Valor a Pagar Recursos Propios':
         valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp) - valor
 
@@ -539,8 +539,8 @@ def input_transformacion(dataFrame):
         valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Abono':
         valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
-      # if accion == 'actualizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Valor Fecha Riesgo':
-        # valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
+      if accion == 'actualizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Valor Fecha Riesgo':
+        valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor Fecha Cobro' and tipo_anterior == 'Valor a Pagar Recursos Propios':
         valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
 
