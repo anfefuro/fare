@@ -49,7 +49,7 @@ for idx, i in enumerate(st.session_state.indices_eventos):
     if fecha_ipcp:
         st.date_input(f"Fecha IPCP {idx+1}", key=f"fecha_ipcp_{i}", min_value=pd.Timestamp('1954-08-01').date())
     
-    st.selectbox(f"Tipo {idx+1}", key=f"tipo_{i}", options=['Valor Fecha Corte', 'Valor Fecha Riesgo', 'Abono', 'Reintegro', 'Valor a Pagar', 'Valor Fecha Cobro', 'Valor a Pagar Recursos Propios'])
+    st.selectbox(f"Tipo {idx+1}", key=f"tipo_{i}", options=['Valor Fecha Corte', 'Valor Fecha Riesgo', 'Abono', 'Reintegro', 'Valor a Pagar', 'Valor Fecha Cobro', 'Valor a Pagar Recursos Propios', 'Abono Despues de Fecha Cobro'])
     # La TRR tendran un valor por defecto de 4
     st.number_input(f"TRR {idx+1}", key=f"trr_{i}", min_value=0, max_value=5, step=1, help="Ingrese el porcentaje de TRR, por ejemplo, 3 para 3%", value=4)
 
