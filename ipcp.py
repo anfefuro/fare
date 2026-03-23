@@ -358,10 +358,14 @@ def determinador_accion(tipo, fecha_inicial, fecha_pension, fecha_cobro):
     return 'actualizacion_capitalizacion'
   if tipo == 'Abono' and fecha_inicial >= fecha_pension:
     return 'actualizacion'
+  if tipo == 'Abono Despues de Fecha Cobro':
+    return 'actualizacion_capitalizacion'
   if tipo == 'Reintegro' and fecha_inicial < fecha_pension:
     return 'actualizacion_capitalizacion'
   if tipo == 'Reintegro' and fecha_inicial >= fecha_pension:
     return 'actualizacion'
+  # if tipo == 'Reintegro Despues de Fecha Cobro':
+  #   return 'actualizacion_capitalizacion'
   if tipo == 'Valor a Pagar' and fecha_inicial <= fecha_pension:
     return 'actualizacion_capitalizacion'
   if tipo == 'Valor a Pagar' and fecha_inicial > fecha_pension:
@@ -556,6 +560,8 @@ def input_transformacion(dataFrame):
         valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Corte':
         valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Abono Despues de Fecha Cobro':
+        valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
       #### ACT ####
       if accion == 'actualizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Cobro':
         valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
@@ -565,6 +571,12 @@ def input_transformacion(dataFrame):
         valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
       if accion == 'actualizacion' and tipo == 'Valor a Pagar Recursos Propios' and tipo_anterior == 'Valor Fecha Riesgo':
         valor_referencia = actualizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
+      
+      #### ABONO DESPUES DE FECHA COBRO ####
+      #### ACT / CAP ####
+      if accion == 'actualizacion_capitalizacion' and tipo == 'Abono Despues de Fecha Cobro':
+        valor_actualizado = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
+        valor_referencia = valor_actualizado - valor
 
       nuevo_valor.append(valor_referencia)
 
