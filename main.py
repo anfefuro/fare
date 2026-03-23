@@ -1,171 +1,215 @@
-import streamlit as st
-import pandas as pd
-import os
 import io
+import pandas as pd
+from nicegui import app, ui
+from fastapi.responses import Response
 
-from ipcp import input_transformacion, actualizacion, actualizacion_y_capitalizacion
+from ipcp import input_transformacion, actualizacion as calc_actualizacion, actualizacion_y_capitalizacion
 
-st.title("IPCP Calculadora")
+MIN_DATE = '1954/08/01'
+TIPOS = [
+    'Valor Fecha Corte', 'Valor Fecha Riesgo', 'Abono', 'Reintegro',
+    'Valor a Pagar', 'Valor Fecha Cobro', 'Valor a Pagar Recursos Propios',
+]
 
-# Inicializar el contador de bloques en session_state
-if "num_bloques" not in st.session_state:
-    st.session_state.num_bloques = 1
+_excel_cache = None  # type: bytes | None
 
-# Inicializar la lista de índices de eventos si no existe
-if "indices_eventos" not in st.session_state:
-    st.session_state.indices_eventos = list(range(st.session_state.num_bloques))
 
-# Función para eliminar un evento
-def eliminar_evento(indice_a_eliminar):
-    # Obtener la lista actual de índices
-    indices_actuales = st.session_state.indices_eventos.copy()
-    # Eliminar el índice del evento a eliminar
-    indices_actuales.remove(indice_a_eliminar)
-    # Actualizar la lista de índices
-    st.session_state.indices_eventos = indices_actuales
-    # Reducir el contador de bloques
-    st.session_state.num_bloques -= 1
+def today_str() -> str:
+    return pd.Timestamp.today().strftime('%Y/%m/%d')
 
-# Mostrar cada bloque de inputs
-for idx, i in enumerate(st.session_state.indices_eventos):
-    col1, col2 = st.columns([0.95, 0.05])
-    
-    with col1:
-        st.subheader(f"Movimiento {idx+1}")
-    
-    with col2:
-        # Botón de eliminar con icono de bote de basura
-        if st.button("🗑️", key=f"eliminar_{i}"):
-            eliminar_evento(i)
-            st.rerun()
-    
-    # Este valor es un entero, sin embargo el usuario puede verlo en formato moneda con dos decimales
-    st.number_input(f"Valor {idx+1}", key=f"valor_{i}", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
-    st.date_input(f"Fecha {idx+1}", key=f"fecha_{i}", min_value=pd.Timestamp('1954-08-01').date())
-    # Agregar un checkbox para habilitar fecha IPCP
-    fecha_ipcp = st.checkbox("📅 Fecha IPCP", key=f"fecha_check_{i}")
-    
-    # Si la fecha IPCP está habilitada, agregar un input para la fecha IPCP
-    if fecha_ipcp:
-        st.date_input(f"Fecha IPCP {idx+1}", key=f"fecha_ipcp_{i}", min_value=pd.Timestamp('1954-08-01').date())
-    
-    st.selectbox(f"Tipo {idx+1}", key=f"tipo_{i}", options=['Valor Fecha Corte', 'Valor Fecha Riesgo', 'Abono', 'Reintegro', 'Valor a Pagar', 'Valor Fecha Cobro', 'Valor a Pagar Recursos Propios'])
-    # La TRR tendran un valor por defecto de 4
-    st.number_input(f"TRR {idx+1}", key=f"trr_{i}", min_value=0, max_value=5, step=1, help="Ingrese el porcentaje de TRR, por ejemplo, 3 para 3%", value=4)
 
-    # Al final de cada bloque, agregar un cuadro de texto donde el usuario pueda ingresar una descripción
-    st.text_input(f"Descripción {idx+1}", key=f"descripcion_{i}", help="Descripción del movimiento")
+def to_date(s: str):
+    return pd.Timestamp(s.replace('/', '-')).date()
 
-# Botón para agregar otro bloque
-if st.button("➕ Agregar movimiento"):
-    # Agregar un nuevo índice (mayor que los existentes)
-    nuevo_indice = max(st.session_state.indices_eventos + [-1]) + 1
-    st.session_state.indices_eventos.append(nuevo_indice)
-    st.session_state.num_bloques += 1
 
-# Botón para mostrar resultados
-if st.button("📋 Mostrar datos ingresados"):
-    datos = []
-    for i in st.session_state.indices_eventos:
-        datos.append({
-            "valor": st.session_state[f"valor_{i}"],
-            "fecha": st.session_state[f"fecha_{i}"],
-            "fecha_check": st.session_state[f"fecha_check_{i}"],
-            "fecha_ipcp": st.session_state[f"fecha_ipcp_{i}"] if st.session_state[f"fecha_check_{i}"] else pd.Timestamp('1954-08-01').date(),
-            "tipo": st.session_state[f"tipo_{i}"],
-            "trr": st.session_state[f"trr_{i}"],
-            "descripcion": st.session_state[f"descripcion_{i}"]
-        })
-    
-    # Convertir la lista de diccionarios en un DataFrame
-    df = pd.DataFrame(datos)
-
-    # Procesar los datos con la función input_transformacion
-    resultado = input_transformacion(df)
-
-    # Mostrar el resultado en la interfaz
-    st.write(resultado)
-    
-    # Crear un buffer en memoria para el archivo Excel
-    buffer = io.BytesIO()
-    
-    # Guardar el DataFrame en formato Excel
-    with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
-        resultado.to_excel(writer, index=False, sheet_name='Resultados')
-    
-    # Establecer el puntero al inicio del buffer
-    buffer.seek(0)
-    
-    # Agregar botón de descarga para el DataFrame de resultados en formato Excel
-    st.download_button(
-        label="💾 Descargar resultados (Excel)",
-        data=buffer,
-        file_name="resultados_ipcp.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+# ── FastAPI download endpoint ─────────────────────────────────────────────────
+@app.get('/descargar-resultados')
+def descargar_resultados():
+    if _excel_cache is None:
+        return Response(content='Sin datos', status_code=404)
+    return Response(
+        content=_excel_cache,
+        media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        headers={'Content-Disposition': 'attachment; filename=resultados_ipcp.xlsx'},
     )
 
-# Botón para imprimir la página
-if st.button("🖨️ Imprimir página"):
-    st.write("Imprimiendo página...")
-    # Aquí puedes agregar la lógica para imprimir la página, por ejemplo, usando JavaScript
-    st.markdown("""
-        <script>
-            window.print();
-        </script>
-    """, unsafe_allow_html=True)
+
+# ── Movimiento model ──────────────────────────────────────────────────────────
+class Movimiento:
+    def __init__(self):
+        self.valor: float = 0
+        self.fecha: str = today_str()
+        self.fecha_check: bool = False
+        self.fecha_ipcp: str = MIN_DATE
+        self.tipo: str = TIPOS[0]
+        self.trr: float = 4
+        self.descripcion: str = ''
 
 
-st.title("Calculadora de Actualización")
-
-# Creamos un bloque más, pero aislado del resto
-with st.container():
-    # Este valor es un entero, sin embargo el usuario puede verlo en formato moneda con dos decimales
-    st.number_input(f"Valor", key=f"valor", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
-    st.date_input(f"Fecha Inicial", key=f"fecha_inicial", min_value=pd.Timestamp('1954-08-01').date())
-    # Agregar un checkbox para habilitar fecha IPCP
-    fecha_ipcp = st.checkbox("📅 Fecha IPCP", key=f"fecha_check")
-    
-    # Si la fecha IPCP está habilitada, agregar un input para la fecha IPCP
-    if fecha_ipcp:
-        st.date_input(f"Fecha IPCP", key=f"fecha_ipcp", min_value=pd.Timestamp('1954-08-01').date())
-    st.date_input(f"Fecha Final", key=f"fecha_final", min_value=pd.Timestamp('1954-08-01').date())
-
-# Botón para mostrar resultados de actualización
-if st.button("📋 Mostrar resultados de actualización"):
-    # Obtener los valores de entrada
-    valor = st.session_state["valor"]
-    fecha_inicial = st.session_state["fecha_inicial"]
-    fecha_check = st.session_state["fecha_check"]
-    fecha_ipcp = st.session_state["fecha_ipcp"] if fecha_check else pd.Timestamp('1954-08-01').date()
-    fecha_final = st.session_state["fecha_final"]
-
-    # Llamar a la función de actualización
-    actualizacion = actualizacion(valor, fecha_inicial, fecha_final, fecha_check, fecha_ipcp)
-
-    # Mostrar el resultado de la actualización con un formato de texto grande y como moneda
-    st.write(f"El valor actualizado es: **{actualizacion:,.2f}**")
+movimientos: list[Movimiento] = [Movimiento()]
 
 
-st.title("Calculadora de Actualización y Capitalización")
+# ── Section 1: IPCP Calculator ────────────────────────────────────────────────
+@ui.refreshable
+def render_movimientos():
+    for idx, mov in enumerate(movimientos):
+        with ui.card().classes('w-full mb-2 p-4'):
+            with ui.row().classes('w-full items-center justify-between'):
+                ui.label(f'Movimiento {idx + 1}').classes('text-xl font-bold')
+                def on_delete(m=mov):
+                    movimientos.remove(m)
+                    render_movimientos.refresh()
+                ui.button('🗑️', on_click=on_delete).props('flat dense color=negative')
 
-with st.container():
-    st.number_input("Valor", key="valor_ayc", min_value=0, help="Ingrese el valor del evento, por ejemplo, 1000000 para 1000000.00")
-    st.date_input("Fecha Inicial", key="fecha_inicial_ayc", min_value=pd.Timestamp('1954-08-01').date())
-    fecha_ipcp_ayc = st.checkbox("📅 Fecha IPCP", key="fecha_check_ayc")
+            ui.number(f'Valor {idx + 1}', value=mov.valor, min=0, format='%.0f').bind_value(mov, 'valor')
+            ui.label(f'Fecha {idx + 1}').classes('mt-2 text-sm text-gray-600')
+            ui.date(value=mov.fecha).bind_value(mov, 'fecha')
+            ui.checkbox('📅 Fecha IPCP', value=mov.fecha_check).bind_value(mov, 'fecha_check')
+            with ui.column() as ipcp_col:
+                ui.label(f'Fecha IPCP {idx + 1}').classes('text-sm text-gray-600')
+                ui.date(value=mov.fecha_ipcp).bind_value(mov, 'fecha_ipcp')
+            ipcp_col.bind_visibility_from(mov, 'fecha_check')
+            ui.select(TIPOS, value=mov.tipo, label=f'Tipo {idx + 1}').bind_value(mov, 'tipo').classes('w-full')
+            ui.number(f'TRR {idx + 1} (%)', value=mov.trr, min=0, max=5, step=1).bind_value(mov, 'trr')
+            ui.input(f'Descripción {idx + 1}', value=mov.descripcion,
+                     placeholder='Descripción del movimiento').bind_value(mov, 'descripcion').classes('w-full')
 
-    if fecha_ipcp_ayc:
-        st.date_input("Fecha IPCP", key="fecha_ipcp_ayc", min_value=pd.Timestamp('1954-08-01').date())
-    st.date_input("Fecha Final", key="fecha_final_ayc", min_value=pd.Timestamp('1954-08-01').date())
-    st.number_input("TRR", key="trr_ayc", min_value=0, max_value=5, step=1, help="Ingrese el porcentaje de TRR, por ejemplo, 3 para 3%", value=4)
 
-if st.button("📋 Mostrar resultados de actualización y capitalización"):
-    valor_ayc = st.session_state["valor_ayc"]
-    fecha_inicial_ayc = st.session_state["fecha_inicial_ayc"]
-    fecha_check_ayc = st.session_state["fecha_check_ayc"]
-    fecha_ipcp_ayc = st.session_state["fecha_ipcp_ayc"] if fecha_check_ayc else pd.Timestamp('1954-08-01').date()
-    fecha_final_ayc = st.session_state["fecha_final_ayc"]
-    trr_ayc = st.session_state["trr_ayc"]
+ui.label('IPCP Calculadora').classes('text-3xl font-bold my-4')
+render_movimientos()
 
-    resultado_ayc = actualizacion_y_capitalizacion(valor_ayc, fecha_inicial_ayc, fecha_final_ayc, fecha_check_ayc, fecha_ipcp_ayc, trr_ayc)
+result_ipcp = ui.column().classes('w-full mt-2')
 
-    st.write(f"El valor actualizado y capitalizado es: **{resultado_ayc:,.2f}**")
+
+def mostrar_ipcp():
+    global _excel_cache
+    datos = [
+        {
+            'valor': int(mov.valor or 0),
+            'fecha': to_date(mov.fecha),
+            'fecha_check': mov.fecha_check,
+            'fecha_ipcp': to_date(mov.fecha_ipcp) if mov.fecha_check else pd.Timestamp('1954-08-01').date(),
+            'tipo': mov.tipo,
+            'trr': int(mov.trr or 0),
+            'descripcion': mov.descripcion,
+        }
+        for mov in movimientos
+    ]
+    df = pd.DataFrame(datos)
+    resultado = input_transformacion(df)
+
+    buf = io.BytesIO()
+    with pd.ExcelWriter(buf, engine='openpyxl') as writer:
+        resultado.to_excel(writer, index=False, sheet_name='Resultados')
+    buf.seek(0)
+    _excel_cache = buf.read()
+
+    result_ipcp.clear()
+    with result_ipcp:
+        ui.table.from_pandas(resultado).classes('w-full')
+        ui.button('💾 Descargar resultados (Excel)',
+                  on_click=lambda: ui.navigate.to('/descargar-resultados', new_tab=True)).classes('mt-2')
+
+
+with ui.row().classes('gap-2 my-2'):
+    ui.button('➕ Agregar movimiento',
+              on_click=lambda: (movimientos.append(Movimiento()), render_movimientos.refresh()))
+    ui.button('📋 Mostrar datos ingresados', on_click=mostrar_ipcp)
+    ui.button('🖨️ Imprimir página', on_click=lambda: ui.run_javascript('window.print()'))
+
+
+# ── Section 2: Calculadora de Actualización ───────────────────────────────────
+ui.separator().classes('my-6')
+ui.label('Calculadora de Actualización').classes('text-3xl font-bold my-4')
+
+
+class EstadoAct:
+    def __init__(self):
+        self.valor: float = 0
+        self.fecha_inicial: str = today_str()
+        self.fecha_check: bool = False
+        self.fecha_ipcp: str = MIN_DATE
+        self.fecha_final: str = today_str()
+
+
+act = EstadoAct()
+result_act = ui.label('').classes('text-xl my-2')
+
+with ui.card().classes('w-full p-4'):
+    ui.number('Valor', value=act.valor, min=0, format='%.0f').bind_value(act, 'valor')
+    ui.label('Fecha Inicial').classes('mt-2 text-sm text-gray-600')
+    ui.date(value=act.fecha_inicial).bind_value(act, 'fecha_inicial')
+    ui.checkbox('📅 Fecha IPCP', value=act.fecha_check).bind_value(act, 'fecha_check')
+    with ui.column() as act_ipcp_col:
+        ui.label('Fecha IPCP').classes('text-sm text-gray-600')
+        ui.date(value=act.fecha_ipcp).bind_value(act, 'fecha_ipcp')
+    act_ipcp_col.bind_visibility_from(act, 'fecha_check')
+    ui.label('Fecha Final').classes('mt-2 text-sm text-gray-600')
+    ui.date(value=act.fecha_final).bind_value(act, 'fecha_final')
+
+
+def mostrar_actualizacion():
+    fecha_ipcp = to_date(act.fecha_ipcp) if act.fecha_check else pd.Timestamp('1954-08-01').date()
+    valor = calc_actualizacion(
+        int(act.valor or 0),
+        to_date(act.fecha_inicial),
+        to_date(act.fecha_final),
+        act.fecha_check,
+        fecha_ipcp,
+    )
+    result_act.set_text(f'El valor actualizado es: {valor:,.2f}')
+
+
+ui.button('📋 Mostrar resultados de actualización', on_click=mostrar_actualizacion).classes('my-2')
+
+
+# ── Section 3: Calculadora de Actualización y Capitalización ──────────────────
+ui.separator().classes('my-6')
+ui.label('Calculadora de Actualización y Capitalización').classes('text-3xl font-bold my-4')
+
+
+class EstadoAyC:
+    def __init__(self):
+        self.valor: float = 0
+        self.fecha_inicial: str = today_str()
+        self.fecha_check: bool = False
+        self.fecha_ipcp: str = MIN_DATE
+        self.fecha_final: str = today_str()
+        self.trr: float = 4
+
+
+ayc = EstadoAyC()
+result_ayc = ui.label('').classes('text-xl my-2')
+
+with ui.card().classes('w-full p-4'):
+    ui.number('Valor', value=ayc.valor, min=0, format='%.0f').bind_value(ayc, 'valor')
+    ui.label('Fecha Inicial').classes('mt-2 text-sm text-gray-600')
+    ui.date(value=ayc.fecha_inicial).bind_value(ayc, 'fecha_inicial')
+    ui.checkbox('📅 Fecha IPCP', value=ayc.fecha_check).bind_value(ayc, 'fecha_check')
+    with ui.column() as ayc_ipcp_col:
+        ui.label('Fecha IPCP').classes('text-sm text-gray-600')
+        ui.date(value=ayc.fecha_ipcp).bind_value(ayc, 'fecha_ipcp')
+    ayc_ipcp_col.bind_visibility_from(ayc, 'fecha_check')
+    ui.label('Fecha Final').classes('mt-2 text-sm text-gray-600')
+    ui.date(value=ayc.fecha_final).bind_value(ayc, 'fecha_final')
+    ui.number('TRR (%)', value=ayc.trr, min=0, max=5, step=1).bind_value(ayc, 'trr')
+
+
+def mostrar_ayc():
+    fecha_ipcp = to_date(ayc.fecha_ipcp) if ayc.fecha_check else pd.Timestamp('1954-08-01').date()
+    valor = actualizacion_y_capitalizacion(
+        int(ayc.valor or 0),
+        to_date(ayc.fecha_inicial),
+        to_date(ayc.fecha_final),
+        ayc.fecha_check,
+        fecha_ipcp,
+        int(ayc.trr or 0),
+    )
+    result_ayc.set_text(f'El valor actualizado y capitalizado es: {valor:,.2f}')
+
+
+ui.button('📋 Mostrar resultados de actualización y capitalización',
+          on_click=mostrar_ayc).classes('my-2')
+
+
+ui.run(title='IPCP Calculadora', port=8080)
