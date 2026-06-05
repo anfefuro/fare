@@ -437,7 +437,7 @@ def input_transformacion(dataFrame):
       fecha_ipcp = user_input['fecha_ipcp'][i]
 
 
-      if accion == None:
+      if tipo == 'Valor Fecha Corte':
         valor_referencia = valor
       if accion == 'actualizacion_capitalizacion' and tipo == 'Valor Fecha Riesgo':
         valor_referencia = actualizacion_y_capitalizacion(valor_referencia, fecha_inicial, fecha_final, fecha_check, fecha_ipcp, trr)
